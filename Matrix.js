@@ -36,6 +36,38 @@ Matrix.prototype._new = function (x, y, z, type) {
   return index;
 };
 
+Matrix.prototype._rotateLeft = function (index) {
+  var i = index;
+  var j = this._store.get(i, 'r');
+  var k = this._store.get(j, 'l');
+  this._store.set(i, 'r', k);
+  this._store.set(j, 'l', i);
+  return j;
+};
+
+Matrix.prototype._rotateRight = function (index) {
+  var i = index;
+  var j = this._store.get(i, 'l');
+  var k = this._store.get(j, 'r');
+  this._store.set(i, 'l', k);
+  this._store.set(j, 'r', i);
+  return j;
+};
+
+Matrix.prototype._rotateLeftRight = function (index) {
+  var i = index;
+  var j = this._store.get(i, 'l');
+  this._store.set(i, 'l', this._rotateLeft(j));
+  return this._rotateRight(i);
+};
+
+Matrix.prototype._rotateRightLeft = function (index) {
+  var i = index;
+  var j = this._store.get(i, 'r');
+  this._store.set(i, 'r', this._rotateRight(j));
+  return this._rotateLeft(i);
+};
+
 Matrix.prototype.get = function (x, y, z) {
   var i = this._root;
   while (i) {
