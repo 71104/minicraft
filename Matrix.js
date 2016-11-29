@@ -3,8 +3,25 @@ function Matrix() {
   this._root = 0;
 }
 
-Matrix.prototype._less = function (x0, y0, z0, x1, y1, z1) {
-  return x0 <= x1 || !(x0 >= x1) && (y0 <= y1 || !(y0 >= y1) && (z0 <= z1));
+Matrix.prototype._cmp = function (x, y, z, i) {
+  var xi = this._store.get(i, 'x');
+  var yi = this._store.get(i, 'y');
+  var zi = this._store.get(i, 'z');
+  if (x < xi) {
+    return -1;
+  } else if (x > xi) {
+    return 1;
+  } else if (y < yi) {
+    return -1;
+  } else if (y > yi) {
+    return 1;
+  } else if (z < zi) {
+    return -1;
+  } else if (z > zi) {
+    return 1;
+  } else {
+    return 0;
+  }
 };
 
 Matrix.prototype._new = function (x, y, z, type) {
@@ -19,23 +36,13 @@ Matrix.prototype._new = function (x, y, z, type) {
   return index;
 };
 
-Matrix.prototype._insert = function (x, y, z, type) {
-  // TODO
-};
-
-Matrix.prototype._remove = function (x, y, z) {
-  // TODO
-};
-
 Matrix.prototype.get = function (x, y, z) {
   var i = this._root;
   while (i) {
-    var xi = this._store.get(i, 'x');
-    var yi = this._store.get(i, 'y');
-    var zi = this._store.get(i, 'z');
-    if (this._less(x, y, z, xi, yi, zi)) {
+    var cmp = this._cmp(x, y, z, i);
+    if (cmp < 0) {
       i = this._store.get(i, 'l');
-    } else if (this._less(xi, yi, zi, x, y, z)) {
+    } else if (cmp > 0) {
       i = this._store.get(i, 'r');
     } else {
       return this._store.get(i, 't');
@@ -44,36 +51,26 @@ Matrix.prototype.get = function (x, y, z) {
 };
 
 Matrix.prototype.set = function (x, y, z, type) {
-  var i = this._root;
-  while (i) {
-    var xi = this._store.get(i, 'x');
-    var yi = this._store.get(i, 'y');
-    var zi = this._store.get(i, 'z');
-    if (this._less(x, y, z, xi, yi, zi)) {
-      i = this._store.get(i, 'l');
-    } else if (this._less(xi, yi, zi, x, y, z)) {
-      i = this._store.get(i, 'r');
+  if (this._root) {
+    if (this._cmp(x, y, z, this._root)) {
+      while (true) {
+        // TODO
+      }
     } else {
-      this._store.set(i, 't', type);
-      return;
+      this._store.set(this._root, 't', type);
     }
+  } else {
+    this._root = this._new(x, y, z, type);
   }
-  this._insert(x, y, z, type);
 };
 
 Matrix.prototype.erase = function (x, y, z) {
-  var i = this._root;
-  while (i) {
-    var xi = this._store.get(i, 'x');
-    var yi = this._store.get(i, 'y');
-    var zi = this._store.get(i, 'z');
-    if (this._less(x, y, z, xi, yi, zi)) {
-      i = this._store.get(i, 'l');
-    } else if (this._less(xi, yi, zi, x, y, z)) {
-      i = this._store.get(i, 'r');
+  if (this._root) {
+    if (this._cmp(x, y, z, this._root)) {
+      // TODO
     } else {
-      this._remove(x, y, z);
-      return;
+      this._store.delete(this._root);
+      this._root = 0;
     }
   }
 };
