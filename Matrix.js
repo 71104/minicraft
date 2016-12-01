@@ -1,5 +1,5 @@
 function Matrix() {
-  this._store = new MemoryStore(['l', 'r', 'b', 'x', 'y', 'z', 't']);
+  this._store = new MemoryStore(['l', 'r', 'h', 'x', 'y', 'z', 't']);
   this._root = 0;
 }
 
@@ -28,12 +28,34 @@ Matrix.prototype._new = function (x, y, z, type) {
   var index = this._store.new();
   this._store.set(index, 'l', 0);
   this._store.set(index, 'r', 0);
-  this._store.set(index, 'b', 0);
+  this._store.set(index, 'h', 1);
   this._store.set(index, 'x', x);
   this._store.set(index, 'y', y);
   this._store.set(index, 'z', z);
   this._store.set(index, 't', type);
   return index;
+};
+
+Matrix.prototype._height = function (i) {
+  if (i) {
+    return this._store.get(i, 'h');
+  } else {
+    return 0;
+  }
+};
+
+Matrix.prototype._updateHeight = function (i) {
+  this._store.set(i, 'h', Math.max(this._height(this._store.get(i, 'l')),
+        this._height(this._store.get(i, 'r'))) + 1);
+};
+
+Matrix.prototype._bf = function (i) {
+  if (i) {
+    return this._height(this._store.get(i, 'r')) -
+        this._height(this._store.get(i, 'l'));
+  } else {
+    return 0;
+  }
 };
 
 Matrix.prototype._rotateLeft = function (index) {
@@ -42,6 +64,8 @@ Matrix.prototype._rotateLeft = function (index) {
   var k = this._store.get(j, 'l');
   this._store.set(i, 'r', k);
   this._store.set(j, 'l', i);
+  this._updateHeight(i);
+  this._updateHeight(j);
   return j;
 };
 
@@ -51,6 +75,8 @@ Matrix.prototype._rotateRight = function (index) {
   var k = this._store.get(j, 'r');
   this._store.set(i, 'l', k);
   this._store.set(j, 'r', i);
+  this._updateHeight(i);
+  this._updateHeight(j);
   return j;
 };
 
@@ -68,6 +94,21 @@ Matrix.prototype._rotateRightLeft = function (index) {
   return this._rotateLeft(i);
 };
 
+Matrix.prototype.has = function (x, y, z) {
+  var i = this._root;
+  while (i) {
+    var cmp = this._cmp(x, y, z, i);
+    if (cmp < 0) {
+      i = this._store.get(i, 'l');
+    } else if (cmp > 0) {
+      i = this._store.get(i, 'r');
+    } else {
+      return true;
+    }
+  }
+  return false;
+};
+
 Matrix.prototype.get = function (x, y, z) {
   var i = this._root;
   while (i) {
@@ -82,27 +123,83 @@ Matrix.prototype.get = function (x, y, z) {
   }
 };
 
-Matrix.prototype.set = function (x, y, z, type) {
-  if (this._root) {
-    if (this._cmp(x, y, z, this._root)) {
-      while (true) {
-        // TODO
+Matrix.prototype._setLeft = function (i, x, y, z, type) {
+  var j = this._set(this._store.get(i, 'l'), x, y, z, type);
+  if (j) {
+    this._store.set(i, 'l', j);
+    if (this._bf(i) < -1) {
+      if (this._bf(j) > 0) {
+        return this._rotateLeftRight(i);
+      } else {
+        return this._rotateRight(i);
       }
     } else {
-      this._store.set(this._root, 't', type);
+      return i;
     }
   } else {
-    this._root = this._new(x, y, z, type);
+    return 0;
   }
 };
 
-Matrix.prototype.erase = function (x, y, z) {
-  if (this._root) {
-    if (this._cmp(x, y, z, this._root)) {
-      // TODO
+Matrix.prototype._setRight = function (i, x, y, z, type) {
+  var j = this._set(this._store.get(i, 'r'), x, y, z, type);
+  if (j) {
+    this._store.set(i, 'r', j);
+    if (this._bf(i) > 1) {
+      if (this._bf(j) < 0) {
+        return this._rotateRightLeft(i);
+      } else {
+        return this._rotateLeft(i);
+      }
     } else {
-      this._store.delete(this._root);
-      this._root = 0;
+      return i;
     }
+  } else {
+    return 0;
   }
+};
+
+Matrix.prototype._set = function (i, x, y, z, type) {
+  if (i) {
+    var cmp = this._cmp(x, y, z, i);
+    if (cmp < 0) {
+      return this._setLeft(i, x, y, z, type);
+    } else if (cmp > 0) {
+      return this._setRight(i, x, y, z, type);
+    } else {
+      this._store.set(i, 't', type);
+      return 0;
+    }
+  } else {
+    return this._new(x, y, z, type);
+  }
+};
+
+Matrix.prototype.set = function (x, y, z, type) {
+  this._root = this._set(this._root, x, y, z, type) || this._root;
+};
+
+Matrix.prototype._erase = function (i, x, y, z) {
+  // TODO
+};
+
+Matrix.prototype.erase = function (x, y, z) {
+  this._root = this._erase(this._root, x, y, z);
+};
+
+Matrix.prototype._each = function (i, callback) {
+  if (i) {
+    this._each(this._store.get(i, 'l'), callback);
+    callback(
+        this._store.get(i, 'x'),
+        this._store.get(i, 'y'),
+        this._store.get(i, 'z'),
+        this._store.get(i, 't')
+        );
+    this._each(this._store.get(i, 'r'), callback);
+  }
+};
+
+Matrix.prototype.each = function (callback) {
+  this._each(this._root, callback);
 };
