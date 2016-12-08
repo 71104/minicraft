@@ -127,14 +127,17 @@ Matrix.prototype._setLeft = function (i, x, y, z, type) {
   var j = this._set(this._store.get(i, 'l'), x, y, z, type);
   if (j) {
     this._store.set(i, 'l', j);
-    if (this._bf(i) < -1) {
+    var b = this._bf(i);
+    if (b < -1) {
       if (this._bf(j) > 0) {
         return this._rotateLeftRight(i);
       } else {
         return this._rotateRight(i);
       }
-    } else {
+    } else if (b) {
       return i;
+    } else {
+      return 0;
     }
   } else {
     return 0;
@@ -145,14 +148,17 @@ Matrix.prototype._setRight = function (i, x, y, z, type) {
   var j = this._set(this._store.get(i, 'r'), x, y, z, type);
   if (j) {
     this._store.set(i, 'r', j);
-    if (this._bf(i) > 1) {
+    var b = this._bf(i);
+    if (b > 1) {
       if (this._bf(j) < 0) {
         return this._rotateRightLeft(i);
       } else {
         return this._rotateLeft(i);
       }
-    } else {
+    } else if (b) {
       return i;
+    } else {
+      return 0;
     }
   } else {
     return 0;
