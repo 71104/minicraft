@@ -127,6 +127,7 @@ Matrix.prototype._setLeft = function (i, x, y, z, type) {
   var j = this._set(this._store.get(i, 'l'), x, y, z, type);
   if (j) {
     this._store.set(i, 'l', j);
+    this._updateHeight(i);
     var b = this._bf(i);
     if (b < -1) {
       if (this._bf(j) > 0) {
@@ -148,6 +149,7 @@ Matrix.prototype._setRight = function (i, x, y, z, type) {
   var j = this._set(this._store.get(i, 'r'), x, y, z, type);
   if (j) {
     this._store.set(i, 'r', j);
+    this._updateHeight(i);
     var b = this._bf(i);
     if (b > 1) {
       if (this._bf(j) < 0) {
@@ -191,6 +193,7 @@ Matrix.prototype._eraseLeft = function (i, x, y, z) {
     return -1;
   } else {
     this._store.set(i, 'l', j);
+    this._updateHeight(i);
     var b = this._bf(i);
     if (b > 1) {
       var k = this._store.get(i, 'r');
@@ -211,6 +214,7 @@ Matrix.prototype._eraseRight = function (i, x, y, z) {
     return -1;
   } else {
     this._store.set(i, 'r', j);
+    this._updateHeight(i);
     var b = this._bf(i);
     if (b < -1) {
       var k = this._store.get(i, 'l');
@@ -263,4 +267,24 @@ Matrix.prototype._each = function (i, callback) {
 
 Matrix.prototype.each = function (callback) {
   this._each(this._root, callback);
+};
+
+Matrix.prototype._json = function (i) {
+  if (i) {
+    return {
+      left: this._json(this._store.get(i, 'l')),
+      right: this._json(this._store.get(i, 'r')),
+      height: this._store.get(i, 'h'),
+      key: '(' + this._store.get(i, 'x') + ', ' +
+        this._store.get(i, 'y') + ', ' +
+        this._store.get(i, 'z') + ')',
+      type: this._store.get(i, 't'),
+    };
+  } else {
+    return null;
+  }
+};
+
+Matrix.prototype.toJSON = function () {
+  return this._json(this._root);
 };
