@@ -185,12 +185,67 @@ Matrix.prototype.set = function (x, y, z, type) {
   this._root = this._set(this._root, x, y, z, type) || this._root;
 };
 
+Matrix.prototype._eraseLeft = function (i, x, y, z) {
+  var j = this._erase(this._store.get(i, 'l'), x, y, z);
+  if (j < 0) {
+    return -1;
+  } else {
+    this._store.set(i, 'l', j);
+    var b = this._bf(i);
+    if (b > 1) {
+      var k = this._store.get(i, 'r');
+      if (this._bf(k) < 0) {
+        return this._rotateRightLeft(i);
+      } else {
+        return this._rotateLeft(i);
+      }
+    } else {
+      return -1;
+    }
+  }
+};
+
+Matrix.prototype._eraseRight = function (i, x, y, z) {
+  var j = this._erase(this._store.get(i, 'r'), x, y, z);
+  if (j < 0) {
+    return -1;
+  } else {
+    this._store.set(i, 'r', j);
+    var b = this._bf(i);
+    if (b < -1) {
+      var k = this._store.get(i, 'l');
+      if (this._bf(k) > 0) {
+        return this._rotateLeftRight(i);
+      } else {
+        return this._rotateRight(i);
+      }
+    } else {
+      return -1;
+    }
+  }
+};
+
 Matrix.prototype._erase = function (i, x, y, z) {
-  // TODO
+  if (i) {
+    var cmp = this._cmp(x, y, z, i);
+    if (cmp < 0) {
+      return this._eraseLeft(i, x, y, z);
+    } else if (cmp > 0) {
+      return this._eraseRight(i, x, y, z);
+    } else {
+      this._store.delete(i);
+      return 0;
+    }
+  } else {
+    return -1;
+  }
 };
 
 Matrix.prototype.erase = function (x, y, z) {
-  this._root = this._erase(this._root, x, y, z);
+  var i = this._erase(this._root, x, y, z);
+  if (i >= 0) {
+    this._root = i;
+  }
 };
 
 Matrix.prototype._each = function (i, callback) {
