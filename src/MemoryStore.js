@@ -6,6 +6,12 @@ function MemoryStore(fields) {
   }, this);
 }
 
+MemoryStore.prototype.size = function () {
+  for (var field in this._data) {
+    return this._data[field].length;
+  }
+};
+
 MemoryStore.prototype.new = function () {
   var index = this._free.pop();
   if (!this._free.length) {
