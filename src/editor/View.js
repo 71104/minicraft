@@ -1,9 +1,14 @@
 function View() {}
 
 View.project = function (i, j, k) {
-  // TODO
+  return {
+    x: i * 24 + j * 24,
+    y: j * 12 - i * 12 - k * 24,
+  };
 };
 
 View.unproject = function (x, y) {
-  // TODO
+  return function (k) {
+    // TODO
+  };
 };
