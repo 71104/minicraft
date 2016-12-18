@@ -187,6 +187,36 @@ Matrix.prototype.set = function (x, y, z, type) {
   this._root = this._set(this._root, x, y, z, type) || this._root;
 };
 
+Matrix.prototype._next = function (i) {
+  if (i = this._store.get(i, 'r')) {
+    while (true) {
+      var j = this._store.get(i, 'l');
+      if (j) {
+        i = j;
+      } else {
+        return i;
+      }
+    }
+  } else {
+    return 0;
+  }
+};
+
+Matrix.prototype._previous = function (i) {
+  if (i = this._store.get(i, 'l')) {
+    while (true) {
+      var j = this._store.get(i, 'r');
+      if (j) {
+        i = j;
+      } else {
+        return i;
+      }
+    }
+  } else {
+    return 0;
+  }
+};
+
 Matrix.prototype._eraseLeft = function (i, x, y, z) {
   var j = this._erase(this._store.get(i, 'l'), x, y, z);
   if (j < 0) {
@@ -237,6 +267,7 @@ Matrix.prototype._erase = function (i, x, y, z) {
     } else if (cmp > 0) {
       return this._eraseRight(i, x, y, z);
     } else {
+      // FIXME: swap with successor
       this._store.delete(i);
       return 0;
     }
