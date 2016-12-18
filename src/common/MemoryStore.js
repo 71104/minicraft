@@ -1,4 +1,5 @@
 function MemoryStore(fields) {
+  this._size = 0;
   this._free = [1];
   this._data = Object.create(null);
   fields.forEach(function (field) {
@@ -7,9 +8,7 @@ function MemoryStore(fields) {
 }
 
 MemoryStore.prototype.size = function () {
-  for (var field in this._data) {
-    return this._data[field].length;
-  }
+  return this._size;
 };
 
 MemoryStore.prototype.new = function () {
@@ -17,11 +16,13 @@ MemoryStore.prototype.new = function () {
   if (!this._free.length) {
     this._free.push(index + 1);
   }
+  this._size++;
   return index;
 };
 
 MemoryStore.prototype.delete = function (index) {
   this._free.push(index);
+  this._size--;
   for (var field in this._data) {
     delete this._data[field][index];
   }

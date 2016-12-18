@@ -58,10 +58,26 @@ Matrix.prototype.verifyAVL = function () {
   return this._verifyAVL(this._root);
 };
 
+Matrix.prototype._size = function (i) {
+  if (i) {
+    return 1 + this._size(this._store.get(i, 'l')) +
+      this._size(this._store.get(i, 'r'));
+  } else {
+    return 0;
+  }
+};
+
+Matrix.prototype.verifySize = function () {
+  if (this._size(this._root) !== this._store.size()) {
+    throw new Error();
+  }
+};
+
 Matrix.prototype.verifyAll = function () {
   this.verifyHeight();
   this.verifyBST();
   this.verifyAVL();
+  this.verifySize();
 };
 
 
