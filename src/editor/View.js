@@ -9,6 +9,10 @@ View.project = function (i, j, k) {
 
 View.unproject = function (x, y) {
   return function (k) {
-    // TODO
+    return {
+      i: Math.floor((x - y * 2 - k * 48) / 48),
+      j: Math.floor((x + y * 2 + k * 48) / 48),
+      k: k,
+    };
   };
 };

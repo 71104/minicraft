@@ -14,6 +14,27 @@ $(function () {
 
   var context = canvas.get(0).getContext('2d');
 
-  // TODO
+  var matrix = new Matrix();
+
+  function render(tile) {
+    context.clearRect(0, 0, width, height);
+    matrix.each(function (k, i, j, type) {
+      var coordinates = View.project(i, j, k);
+      context.drawImage(tile, coordinates.x, coordinates.y - 36);
+    });
+  }
+
+  $.loadImage('tile.png').then(function (tile) {
+    canvas.click(function (event) {
+      var coordinates = View.unproject(event.clientX, event.clientY)(0);
+      matrix.set(
+        coordinates.k,
+        coordinates.i,
+        coordinates.j,
+        1
+        );
+      render(tile);
+    });
+  });
 
 });
