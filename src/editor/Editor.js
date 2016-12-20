@@ -4,35 +4,33 @@ $(function () {
     icon: false,
   });
 
-  var canvas = $('canvas#canvas');
-  var width = canvas.width();
-  var height = canvas.height();
+  const canvas = $('canvas#canvas');
+  const width = canvas.width();
+  const height = canvas.height();
   canvas.attr({
     width: width,
     height: height,
   });
 
-  var context = canvas.get(0).getContext('2d');
+  const context = canvas.get(0).getContext('2d');
 
-  var matrix = new Matrix();
+  const grid = new Grid(width, height);
+
+  var x0 = 0;
+  var y0 = 0;
 
   function render(tile) {
-    context.clearRect(0, 0, width, height);
-    matrix.each(function (k, i, j, type) {
-      var coordinates = View.project(i, j, k);
-      context.drawImage(tile, coordinates.x, coordinates.y - 36);
+    context.setTransform(1, 0, 0, 1, -x0, -y0);
+    context.clearRect(x0, y0, width, height);
+    grid.each(x0, y0, function (x, y, type) {
+      context.drawImage(tile, x, y);
     });
   }
 
   $.loadImage('tile.png').then(function (tile) {
     canvas.click(function (event) {
-      var coordinates = View.unproject(event.clientX, event.clientY)(0);
-      matrix.set(
-        coordinates.k,
-        coordinates.i,
-        coordinates.j,
-        1
-        );
+      const {i, j, k} = View.unproject(event.clientX, event.clientY)(0);
+      grid.set(i, j, k, 1);
       render(tile);
     });
   });
