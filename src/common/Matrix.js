@@ -38,17 +38,23 @@ Node.prototype.updateHeight = function () {
   this.height = 1 + Math.max(Node.height(this.left), Node.height(this.right));
 };
 
+Node.prototype.bf = function () {
+  return Node.height(this.right) - Node.height(this.left);
+};
+
 Node.prototype.rotateLeft = function () {
-  const root = this.right = this.right.left;
-  this.right.left = this;
+  const root = this.right;
+  this.right = root.left;
+  root.left = this;
   this.updateHeight();
   root.updateHeight();
   return root;
 };
 
 Node.prototype.rotateRight = function () {
-  const root = this.left = this.left.right;
-  this.left.right = this;
+  const root = this.left;
+  this.left = root.right;
+  root.right = this;
   this.updateHeight();
   root.updateHeight();
   return root;
@@ -71,12 +77,24 @@ Node.set = function (node, x, y, z, value) {
     const cmp = node.cmp(x, y, z);
     if (cmp < 0) {
       node.left = Node.set(node.left, x, y, z, value);
+      if (node.bf() < -1) {
+        if (node.left.bf() > 0) {
+          node = node.rotateLeftRight();
+        } else {
+          node = node.rotateRight();
+        }
+      }
       node.updateHeight();
-      // TODO: rebalance
     } else if (cmp > 0) {
       node.right = Node.set(node.right, x, y, z, value);
+      if (node.bf() > 1) {
+        if (node.right.bf() < 0) {
+          node = node.rotateRightLeft();
+        } else {
+          node = node.rotateLeft();
+        }
+      }
       node.updateHeight();
-      // TODO: rebalance
     } else {
       node.value = value;
     }
@@ -97,14 +115,8 @@ Node.erase = function (node, x, y, z) {
       node.right = Node.erase(node.right, x, y, z);
       node.updateHeight();
       return node;
-    } else if (this.right) {
-      var next = this.right;
-      while (next.left) {
-        next = next.left;
-      }
-      // TODO
     } else {
-      return this.left;
+      return null;
     }
   } else {
     return null;
