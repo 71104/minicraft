@@ -4,13 +4,13 @@ function PencilTool(view, stage) {
 }
 
 PencilTool.prototype.down = function (x, y) {
-  const {i, j, k} = View.unproject(x, y)(0);
+  const {i, j, k} = View.unproject(this._view.x0 + x, this._view.y0 + y)(0);
   this._stage.set(i, j, k, 1);
   return true;
 };
 
 PencilTool.prototype.drag = function (x, y) {
-  const {i, j, k} = View.unproject(x, y)(0);
+  const {i, j, k} = View.unproject(this._view.x0 + x, this._view.y0 + y)(0);
   this._stage.set(i, j, k, 1);
   return true;
 };

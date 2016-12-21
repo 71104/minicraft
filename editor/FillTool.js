@@ -14,7 +14,7 @@ FillTool.prototype._flood = function (i, j, k) {
 };
 
 FillTool.prototype.up = function (x, y) {
-  const {i, j, k} = View.unproject(x, y)(0);
+  const {i, j, k} = View.unproject(this._view.x0 + x, this._view.y0 + y)(0);
   this._flood(i, j, k);
   return true;
 };
