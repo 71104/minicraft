@@ -37,23 +37,29 @@ $(function () {
 
     canvas.on('mousedown', function (event) {
       dragging = true;
-      if (tool.down && tool.down(event.clientX, event.clientY)) {
-        stage.render();
-      }
+      tool.down && tool.down(event.clientX, event.clientY) && stage.render();
     }).on('mousemove', function (event) {
       if (dragging) {
-        if (tool.drag && tool.drag(event.clientX, event.clientY)) {
-          stage.render();
-        }
+        tool.drag && tool.drag(event.clientX, event.clientY) && stage.render();
       } else {
-        if (tool.move && tool.move(event.clientX, event.clientY)) {
-          stage.render();
-        }
+        tool.move && tool.move(event.clientX, event.clientY) && stage.render();
       }
     }).on('mouseup', function (event) {
       dragging = false;
-      if (tool.up && tool.up(event.clientX, event.clientY)) {
-        stage.render();
+      tool.up && tool.up(event.clientX, event.clientY) && stage.render();
+    });
+
+    var overriddenTool = null;
+
+    $(window).on('keydown', function (event) {
+      if (event.which === 32 && !dragging && !overriddenTool) {
+        overriddenTool = tool;
+        tool = tools.drag;
+      }
+    }).on('keyup', function (event) {
+      if (event.which === 32 && overriddenTool) {
+        tool = overriddenTool;
+        overriddenTool = null;
       }
     });
   });
