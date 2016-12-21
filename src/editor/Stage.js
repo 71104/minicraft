@@ -30,6 +30,10 @@ Stage.prototype._setup = function () {
   };
 };
 
+Stage.prototype.has = function (i, j, k) {
+  return this._3d.has(i, j, k);
+};
+
 Stage.prototype.set = function (i, j, k, type) {
   const {x, y, z} = View.project(i, j, k);
   if (this._3d.has(i, j, k)) {

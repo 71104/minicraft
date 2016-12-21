@@ -39,6 +39,10 @@ canvas#canvas {
   <script src="../common/Matrix.js"></script>
   <script src="View.js"></script>
   <script src="Stage.js"></script>
+  <script src="DragTool.js"></script>
+  <script src="PencilTool.js"></script>
+  <script src="EraserTool.js"></script>
+  <script src="FillTool.js"></script>
   <script src="Editor.js"></script>
 </head>
 <body>
@@ -55,6 +59,7 @@ canvas#canvas {
       <div id="tool-group">
         <label><input type="radio" name="tool" data-tool="drag" checked/> Drag</label>
         <label><input type="radio" name="tool" data-tool="pencil"/> Pencil</label>
+        <label><input type="radio" name="tool" data-tool="eraser"/> Erase</label>
         <label><input type="radio" name="tool" data-tool="fill"/> Fill</label>
       </div>
     </div>
