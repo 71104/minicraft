@@ -25,7 +25,7 @@ canvas#canvas {
   top: 0;
 }
 
-#layer-manager {
+#layer-controls {
   position: absolute;
   top: 0;
   right: 0;
@@ -39,6 +39,7 @@ canvas#canvas {
   <script src="../common/Matrix.js"></script>
   <script src="View.js"></script>
   <script src="Stage.js"></script>
+  <script src="LayerControls.js"></script>
   <script src="DragTool.js"></script>
   <script src="PencilTool.js"></script>
   <script src="EraserTool.js"></script>
@@ -47,7 +48,7 @@ canvas#canvas {
 </head>
 <body>
   <canvas id="canvas"></canvas>
-  <div id="layer-manager" class="ui-widget">
+  <div id="layer-controls" class="ui-widget">
     <div class="ui-widget-header">Layers</div>
     <div class="ui-widget-content">
       <table></table>

@@ -1,5 +1,7 @@
 $(function () {
-  $('#toolbar #tool-group').controlgroup();
+  $('#toolbar #tool-group').controlgroup({
+    direction: 'vertical',
+  });
   $('#toolbar #tool-group input').checkboxradio({
     icon: false,
   });
@@ -19,6 +21,9 @@ $(function () {
   $.loadImage('tile.png').then(function (tile) {
     const stage = new Stage(tile, view);
     stage.render();
+
+    const layerControls = new LayerControls(stage);
+    layerControls.renderAll();
 
     const tools = {
       drag: new DragTool(view, stage),

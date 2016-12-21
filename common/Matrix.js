@@ -210,6 +210,6 @@ Matrix.prototype.erase = function (x, y, z) {
 
 Matrix.prototype.execute = function (method) {
   if (this._root) {
-    return this._root[method]([].shift.call(arguments));
+    return this._root[method].apply(this._root, [].slice.call(arguments, 1));
   }
 };
