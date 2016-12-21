@@ -72,29 +72,41 @@ Node.prototype.rotateRightLeft = function () {
   return this.rotateLeft();
 };
 
+Node.prototype.rebalanceLeft = function () {
+  if (this.bf() < -1) {
+    if (this.left.bf() > 0) {
+      return this.rotateLeftRight();
+    } else {
+      return this.rotateRight();
+    }
+  } else {
+    return this;
+  }
+};
+
+Node.prototype.rebalanceRight = function () {
+  if (this.bf() > 1) {
+    if (this.right.bf() < 0) {
+      return this.rotateRightLeft();
+    } else {
+      return this.rotateLeft();
+    }
+  } else {
+    return this;
+  }
+};
+
 Node.set = function (node, x, y, z, value) {
   if (node) {
     const cmp = node.cmp(x, y, z);
     if (cmp < 0) {
       node.left = Node.set(node.left, x, y, z, value);
-      if (node.bf() < -1) {
-        if (node.left.bf() > 0) {
-          node = node.rotateLeftRight();
-        } else {
-          node = node.rotateRight();
-        }
-      }
       node.updateHeight();
+      node = node.rebalanceLeft();
     } else if (cmp > 0) {
       node.right = Node.set(node.right, x, y, z, value);
-      if (node.bf() > 1) {
-        if (node.right.bf() < 0) {
-          node = node.rotateRightLeft();
-        } else {
-          node = node.rotateLeft();
-        }
-      }
       node.updateHeight();
+      node = node.rebalanceRight();
     } else {
       node.value = value;
     }
@@ -104,19 +116,50 @@ Node.set = function (node, x, y, z, value) {
   }
 };
 
+Node.prototype.next = function () {
+  var next = this.right;
+  if (next) {
+    while (next.left) {
+      next = next.left;
+    }
+    return next;
+  } else {
+    return null;
+  }
+};
+
+Node._swapField = function (node1, node2, field) {
+  const temp = node1[field];
+  node1[field] = node2[field];
+  node2[field] = temp;
+};
+
+Node._swap = function (node1, node2) {
+  Node._swapField(node1, node2, 'x');
+  Node._swapField(node1, node2, 'y');
+  Node._swapField(node1, node2, 'z');
+  Node._swapField(node1, node2, 'value');
+};
+
 Node.erase = function (node, x, y, z) {
   if (node) {
     const cmp = node.cmp(x, y, z);
     if (cmp < 0) {
       node.left = Node.erase(node.left, x, y, z);
       node.updateHeight();
-      return node;
+      return node.rebalanceLeft();
     } else if (cmp > 0) {
       node.right = Node.erase(node.right, x, y, z);
       node.updateHeight();
-      return node;
+      return node.rebalanceRight();
+    } else if (node.right) {
+      const next = node.next();
+      Node._swap(node, next);
+      node.right = Node.erase(node.right, x, y, z);
+      node.updateHeight();
+      return node.rebalanceRight();
     } else {
-      return null;
+      return node.left;
     }
   } else {
     return null;

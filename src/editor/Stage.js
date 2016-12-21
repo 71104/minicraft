@@ -9,23 +9,23 @@ function Stage(tile, view) {
 Stage.prototype._setup = function () {
   const tile = this._tile;
   const view = this._view;
-  Node.prototype.render = function (left, right) {
+  Node.prototype.render = function () {
     const x = this.y;
     const y = this.z;
     if (x + 48 < view.x0) {
-      right && this.right && this.right.render(false, true);
+      this.right && this.right.render();
     } else if (x > view.x0 + view.width) {
-      left && this.left && this.left.render(true, false);
+      this.left && this.left.render();
     } else if (y + 48 < view.y0) {
-      left && this.left && this.left.render(true, false);
-      right && this.right && this.right.render(false, true);
+      this.left && this.left.render();
+      this.right && this.right.render();
     } else if (y > view.y0 + view.height) {
-      left && this.left && this.left.render(true, false);
-      right && this.right && this.right.render(false, true);
+      this.left && this.left.render();
+      this.right && this.right.render();
     } else {
-      left && this.left && this.left.render(true, true);
+      this.left && this.left.render();
       view.context.drawImage(tile, x, y);
-      right && this.right && this.right.render(true, true);
+      this.right && this.right.render();
     }
   };
 };
@@ -54,5 +54,5 @@ Stage.prototype.render = function () {
   const height = this._view.height;
   this._view.context.setTransform(1, 0, 0, 1, -x0, -y0);
   this._view.context.clearRect(x0, y0, width, height);
-  this._2d.execute('render', true, true);
+  this._2d.execute('render');
 };
