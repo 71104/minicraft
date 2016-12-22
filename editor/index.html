@@ -32,6 +32,10 @@ canvas#canvas {
   width: 300px;
   height: 100%;
 }
+
+#layer-controls table tr td.flex {
+  width: 100%;
+}
   </style>
   <script src="jquery-3.1.1.min.js"></script>
   <script src="jquery-ui.min.js"></script>
@@ -51,8 +55,13 @@ canvas#canvas {
   <div id="layer-controls" class="ui-widget">
     <div class="ui-widget-header">Layers</div>
     <div class="ui-widget-content">
-      <button id="add-layer-above">Add above</button>
-      <button id="add-layer-below">Add below</button>
+      <p>
+        <label><input id="layer-transparency" type="checkbox" checked/> Transparency</label>
+      </p>
+      <p>
+        <button id="add-layer-above">Add above</button>
+        <button id="add-layer-below">Add below</button>
+      </p>
       <table></table>
     </div>
   </div>

@@ -24,6 +24,10 @@ $(function () {
 
     const layerControls = new LayerControls(stage);
     layerControls.renderAll();
+    $('#layer-transparency').change(function () {
+      stage.transparency = $(this).is(':checked');
+      stage.render();
+    });
     $('#add-layer-above').button().click(function () {
       layerControls.addAbove();
     });

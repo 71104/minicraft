@@ -6,6 +6,7 @@ function Stage(tile, view) {
   this.selectedLayer = 0;
   this.layers = Object.create(null);
   this.layers[0] = true;
+  this.transparency = true;
   this._setupNode();
 }
 
@@ -42,7 +43,7 @@ Stage.prototype._setupNode = function () {
     } else {
       this.left && this.left.render();
       if (stage.layers[this.value.k]) {
-        if (stage.selectedLayer !== this.value.k) {
+        if (stage.transparency && stage.selectedLayer !== this.value.k) {
           stage._view.context.globalAlpha = 0.5;
         } else {
           stage._view.context.globalAlpha = 1;

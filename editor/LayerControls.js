@@ -29,7 +29,7 @@ LayerControls.prototype.renderOne = function (k) {
       }
       stage.render();
     })))
-    .append($('<td>').text('Layer ' + k))
+    .append($('<td>').addClass('flex').text('Layer ' + k))
     .append($('<td>').append(button))
     .toggleClass('ui-state-active', k === stage.selectedLayer)
     .click(function () {
