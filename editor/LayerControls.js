@@ -6,8 +6,10 @@ function LayerControls(stage) {
 
 LayerControls.prototype.renderOne = function (k) {
   const stage = this._stage;
-  const icon = $('<span>').addClass('ui-icon').addClass('ui-icon-close');
-  const button = $('<button>').append(icon).button().click(function () {
+  const button = $('<button>').button({
+    icon: 'ui-icon-close',
+    showLabel: false,
+  }).click(function () {
     stage.eraseLayer(k, function (count) {
       return !count || window.confirm(
         `Layer ${k} contains ${count} tiles. Do you want to erase all of them?`
@@ -21,7 +23,7 @@ LayerControls.prototype.renderOne = function (k) {
       type: 'checkbox',
       name: 'enabled',
       checked: true,
-    }).on('change', function () {
+    }).change(function () {
       if ($(this).is(':checked')) {
         stage.layers[k] = true;
       } else {
@@ -50,12 +52,14 @@ LayerControls.prototype.renderAll = function () {
 
 LayerControls.prototype.addAbove = function () {
   const k = ++this._max;
+  this._stage.layers[k] = true;
   $('#layer-controls table').prepend(this.renderOne(k));
   return k;
 };
 
 LayerControls.prototype.addBelow = function () {
   const k = --this._min;
+  this._stage.layers[k] = true;
   $('#layer-controls table').append(this.renderOne(k));
   return k;
 };
