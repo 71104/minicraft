@@ -24,10 +24,16 @@ $(function () {
 
     const layerControls = new LayerControls(stage);
     layerControls.renderAll();
+    $('#add-layer-above').button().click(function () {
+      layerControls.addAbove();
+    });
+    $('#add-layer-below').button().click(function () {
+      layerControls.addBelow();
+    });
 
     const tools = {
       drag: new DragTool(view, stage),
-      pencil: new PencilTool(view, stage),
+      stamp: new StampTool(view, stage),
       eraser: new EraserTool(view, stage),
       fill: new FillTool(view, stage),
     };

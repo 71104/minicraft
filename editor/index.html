@@ -41,7 +41,7 @@ canvas#canvas {
   <script src="Stage.js"></script>
   <script src="LayerControls.js"></script>
   <script src="DragTool.js"></script>
-  <script src="PencilTool.js"></script>
+  <script src="StampTool.js"></script>
   <script src="EraserTool.js"></script>
   <script src="FillTool.js"></script>
   <script src="Main.js"></script>
@@ -51,6 +51,8 @@ canvas#canvas {
   <div id="layer-controls" class="ui-widget">
     <div class="ui-widget-header">Layers</div>
     <div class="ui-widget-content">
+      <button id="add-layer-above">Add above</button>
+      <button id="add-layer-below">Add below</button>
       <table></table>
     </div>
   </div>
@@ -59,7 +61,7 @@ canvas#canvas {
     <div class="ui-widget-content">
       <div id="tool-group">
         <label><input type="radio" name="tool" data-tool="drag" checked/> Drag</label>
-        <label><input type="radio" name="tool" data-tool="pencil"/> Pencil</label>
+        <label><input type="radio" name="tool" data-tool="stamp"/> Stamp</label>
         <label><input type="radio" name="tool" data-tool="eraser"/> Erase</label>
         <label><input type="radio" name="tool" data-tool="fill"/> Fill</label>
       </div>
