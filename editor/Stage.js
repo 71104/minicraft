@@ -31,9 +31,11 @@ Stage.prototype._setupNode = function () {
     const x = this.y;
     const y = this.z;
     if (x + 48 < stage._view.x0) {
+      this.left && this.left.x < this.x && this.left.render();
       this.right && this.right.render();
     } else if (x > stage._view.x0 + stage._view.width) {
       this.left && this.left.render();
+      this.right && this.right.x > this.x && this.right.render();
     } else if (y + 48 < stage._view.y0) {
       this.left && this.left.render();
       this.right && this.right.render();
@@ -42,14 +44,7 @@ Stage.prototype._setupNode = function () {
       this.right && this.right.render();
     } else {
       this.left && this.left.render();
-      if (stage.layers[this.value.k]) {
-        if (stage.transparency && stage.selectedLayer !== this.value.k) {
-          stage._view.context.globalAlpha = 0.5;
-        } else {
-          stage._view.context.globalAlpha = 1;
-        }
-        stage._view.context.drawImage(stage._tile, x, y);
-      }
+      stage._drawTile(x, y, this.value);
       this.right && this.right.render();
     }
   };
@@ -72,6 +67,17 @@ Stage.prototype._setupNode = function () {
 
 };
 
+
+Stage.prototype._drawTile = function (x, y, tile) {
+  if (this.layers[tile.k]) {
+    if (this.transparency && this.selectedLayer !== tile.k) {
+      this._view.context.globalAlpha = 0.5;
+    } else {
+      this._view.context.globalAlpha = 1;
+    }
+    this._view.context.drawImage(this._tile, x, y);
+  }
+};
 
 Stage.prototype.has = function (i, j, k) {
   return this._3d.has(k, i, j);
