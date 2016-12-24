@@ -37,11 +37,11 @@ Stage.prototype._setupNode = function () {
       this.left && this.left.render();
       this.right && this.right.x > this.x && this.right.render();
     } else if (y + 48 < stage._view.y0) {
-      this.left && this.left.render();
+      this.left && this.left.x < this.x && this.left.render();
       this.right && this.right.render();
     } else if (y > stage._view.y0 + stage._view.height) {
       this.left && this.left.render();
-      this.right && this.right.render();
+      this.right && this.right.x > this.x && this.right.render();
     } else {
       this.left && this.left.render();
       stage._drawTile(x, y, this.value);
