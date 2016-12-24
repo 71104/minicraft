@@ -7,6 +7,8 @@ $.loadImage = function (url) {
       deferred.resolve(image);
     };
     image.onerror = function () {
+      image.onload = null;
+      image.onerror = null;
       deferred.reject();
     };
     image.src = url;
