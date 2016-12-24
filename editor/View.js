@@ -2,8 +2,8 @@ function View(context, width, height) {
   this.context = context;
   this.width = width;
   this.height = height;
-  this.x0 = 0;
-  this.y0 = 0;
+  this.x0 = -width >> 1;
+  this.y0 = -height >> 1;
 }
 
 View.project = function (i, j, k) {

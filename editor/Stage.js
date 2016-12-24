@@ -68,6 +68,13 @@ Stage.prototype._setupNode = function () {
 };
 
 
+Stage.prototype._drawLine = function (i0, j0, i1, j1) {
+  const {x: x0, y: y0} = View.project(i0, j0, this.selectedLayer);
+  const {x: x1, y: y1} = View.project(i1, j1, this.selectedLayer);
+  this._view.context.moveTo(x0, y0);
+  this._view.context.lineTo(x1, y1);
+};
+
 Stage.prototype._drawTile = function (x, y, tile) {
   if (this.layers[tile.k]) {
     if (this.transparency && this.selectedLayer !== tile.k) {
@@ -121,8 +128,37 @@ Stage.prototype.render = function () {
   const y0 = this._view.y0;
   const width = this._view.width;
   const height = this._view.height;
+  const k = this.selectedLayer;
   this._view.context.setTransform(1, 0, 0, 1, -x0, -y0);
   this._view.context.clearRect(x0, y0, width, height);
+  const p = [
+    View.unproject(x0, y0)(k),
+    View.unproject(x0 + width, y0)(k),
+    View.unproject(x0, y0 + height)(k),
+    View.unproject(x0 + width, y0 + height)(k),
+  ];
+  const minI = Math.min(p[0].i, p[1].i, p[2].i, p[3].i) - 1;
+  const maxI = Math.max(p[0].i, p[1].i, p[2].i, p[3].i) + 1;
+  const minJ = Math.min(p[0].j, p[1].j, p[2].j, p[3].j) - 1;
+  const maxJ = Math.max(p[0].j, p[1].j, p[2].j, p[3].j) + 1;
+  this._view.context.beginPath();
+  this._view.context.lineWidth = 1;
+  this._drawLine(0, minJ, 0, maxJ);
+  this._drawLine(minI, 0, maxI, 0);
+  this._view.context.stroke();
+  this._view.context.lineWidth = 0.5;
+  for (var i = minI; i <= maxI; i++) {
+    if (i) {
+      this._drawLine(i, minJ, i, maxJ);
+    }
+  }
+  for (var j = minJ; j <= maxJ; j++) {
+    if (j) {
+      this._drawLine(minI, j, maxI, j);
+    }
+  }
+  this._view.context.stroke();
+  this._view.context.closePath();
   this._2d.execute('render');
 };
 
