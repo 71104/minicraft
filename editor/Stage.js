@@ -91,7 +91,7 @@ Stage.prototype.has = function (i, j, k) {
 };
 
 Stage.prototype.set = function (i, j, k, type) {
-  const {x, y, z} = View.project(i, j, k);
+  const {x, y, z} = View.projectTile(i, j, k);
   if (this._3d.has(k, i, j)) {
     this._2d.erase(z, x, y);
   }
@@ -137,10 +137,10 @@ Stage.prototype.render = function () {
     View.unproject(x0, y0 + height)(k),
     View.unproject(x0 + width, y0 + height)(k),
   ];
-  const minI = Math.min(p[0].i, p[1].i, p[2].i, p[3].i) - 1;
-  const maxI = Math.max(p[0].i, p[1].i, p[2].i, p[3].i) + 1;
-  const minJ = Math.min(p[0].j, p[1].j, p[2].j, p[3].j) - 1;
-  const maxJ = Math.max(p[0].j, p[1].j, p[2].j, p[3].j) + 1;
+  const minI = Math.floor(Math.min(p[0].i, p[1].i, p[2].i, p[3].i));
+  const maxI = Math.ceil(Math.max(p[0].i, p[1].i, p[2].i, p[3].i));
+  const minJ = Math.floor(Math.min(p[0].j, p[1].j, p[2].j, p[3].j));
+  const maxJ = Math.ceil(Math.max(p[0].j, p[1].j, p[2].j, p[3].j));
   this._view.context.beginPath();
   this._view.context.lineWidth = 1;
   this._drawLine(0, minJ, 0, maxJ);
