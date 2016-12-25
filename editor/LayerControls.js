@@ -2,7 +2,27 @@ function LayerControls(stage) {
   this._stage = stage;
   this._min = stage.minLayer();
   this._max = stage.maxLayer();
+  this._setup();
 }
+
+LayerControls.prototype._setup = function() {
+  const that = this;
+  const stage = this._stage;
+  $('#layer-transparency').change(function () {
+    stage.transparency = $(this).is(':checked');
+    stage.render();
+  });
+  $('#add-layer-above').button().click(function () {
+    const k = ++that._max;
+    stage.layers[k] = true;
+    $('#layer-controls table').prepend(that.renderOne(k));
+  });
+  $('#add-layer-below').button().click(function () {
+    const k = --that._min;
+    stage.layers[k] = true;
+    $('#layer-controls table').append(that.renderOne(k));
+  });
+};
 
 LayerControls.prototype.renderOne = function (k) {
   const stage = this._stage;
@@ -48,18 +68,4 @@ LayerControls.prototype.renderAll = function () {
     table.append(this.renderOne(k));
   }
   return table;
-};
-
-LayerControls.prototype.addAbove = function () {
-  const k = ++this._max;
-  this._stage.layers[k] = true;
-  $('#layer-controls table').prepend(this.renderOne(k));
-  return k;
-};
-
-LayerControls.prototype.addBelow = function () {
-  const k = --this._min;
-  this._stage.layers[k] = true;
-  $('#layer-controls table').append(this.renderOne(k));
-  return k;
 };

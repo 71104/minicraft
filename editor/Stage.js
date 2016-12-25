@@ -105,7 +105,7 @@ Stage.prototype.set = function (i, j, k, type) {
 };
 
 Stage.prototype.erase = function (i, j, k) {
-  const {x, y, z} = View.project(i, j, k);
+  const {x, y, z} = View.projectTile(i, j, k);
   if (this._3d.has(k, i, j)) {
     this._3d.erase(k, i, j);
     this._2d.erase(z, x, y);

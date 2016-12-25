@@ -35,6 +35,19 @@ canvas#canvas {
 #layer-controls table tr td.flex {
   width: 100%;
 }
+
+#tileset-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 150px;
+  background-color: white;
+}
+
+#tile-dialog {
+  display: none;
+}
   </style>
   <script src="jquery-3.1.1.min.js"></script>
   <script src="jquery-ui.min.js"></script>
@@ -43,6 +56,7 @@ canvas#canvas {
   <script src="View.js"></script>
   <script src="Stage.js"></script>
   <script src="LayerControls.js"></script>
+  <script src="TilesetControls.js"></script>
   <script src="DragTool.js"></script>
   <script src="StampTool.js"></script>
   <script src="EraserTool.js"></script>
@@ -64,6 +78,16 @@ canvas#canvas {
       <table></table>
     </div>
   </div>
+  <div id="tileset-controls" class="ui-widget">
+    <div class="ui-widget-header"></div>
+    <div class="ui-widget-content">
+      <div>
+        <button id="add-tile"></button>
+        <button id="remove-tile" disabled></button>
+      </div>
+      <table></table>
+    </div>
+  </div>
   <div id="toolbar" class="ui-widget">
     <div class="ui-widget-header">Tools</div>
     <div class="ui-widget-content">
@@ -74,6 +98,14 @@ canvas#canvas {
         <label><input type="radio" name="tool" data-tool="fill"/> Fill</label>
       </div>
     </div>
+  </div>
+  <div id="tile-dialog" title="Edit Tile">
+    <ul>
+      <li><a href="#voxel-tab">Voxel</a></li>
+      <li><a href="#custom-block-tab">Custom</a></li>
+    </ul>
+    <div id="voxel-tab"></div>
+    <div id="custom-block-tab">TBD</div>
   </div>
 </body>
 </html>
