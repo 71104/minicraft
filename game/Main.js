@@ -1,14 +1,14 @@
-$(function () {
+function run(atlas) {
   var canvas = $('canvas#canvas');
-  var width = canvas.width();
-  var height = canvas.height();
+  const width = canvas.width();
+  const height = canvas.height();
   canvas.attr({
     width: width,
     height: height,
   });
   canvas = canvas.get(0);
 
-  var gl = canvas.getContext('webgl');
+  const gl = canvas.getContext('webgl');
 
   if (height > width) {
     gl.viewport((width - height) / 2, 0, height, height);
@@ -16,18 +16,13 @@ $(function () {
     gl.viewport(0, (height - width) / 2, width, width);
   }
 
-  var buffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Int16Array([
-      -1, 1, 1,
-      -1, -1, 1,
-      1, -1, 1,
-      1, -1, 1,
-      1, 1, 1,
-      -1, 1, 1,
-  ]), gl.DYNAMIC_DRAW);
+  const texture = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, atlas);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 
-  var fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+  const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
   gl.shaderSource(fragmentShader, $('script#fragment-shader').text());
   gl.compileShader(fragmentShader);
   if (gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
@@ -36,7 +31,7 @@ $(function () {
     console.error(gl.getShaderInfoLog(fragmentShader));
   }
 
-  var vertexShader = gl.createShader(gl.VERTEX_SHADER);
+  const vertexShader = gl.createShader(gl.VERTEX_SHADER);
   gl.shaderSource(vertexShader, $('script#vertex-shader').text());
   gl.compileShader(vertexShader);
   if (gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
@@ -45,13 +40,37 @@ $(function () {
     throw new Error(gl.getShaderInfoLog(vertexShader));
   }
 
+  const vertexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Int16Array([
+      -1, 1, 1,
+      -1, -1, 1,
+      1, -1, 1,
+      1, -1, 1,
+      1, 1, 1,
+      -1, 1, 1,
+  ]), gl.STATIC_DRAW);
   gl.enableVertexAttribArray(0);
   gl.vertexAttribPointer(0, 3, gl.SHORT, false, 0, 0);
 
-  var program = gl.createProgram();
+  const texCoordBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([
+      0, 0,
+      0, 1,
+      1, 1,
+      1, 1,
+      1, 0,
+      0, 0,
+  ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(1);
+  gl.vertexAttribPointer(1, 2, gl.UNSIGNED_BYTE, false, 0, 0);
+
+  const program = gl.createProgram();
   gl.attachShader(program, fragmentShader);
   gl.attachShader(program, vertexShader);
   gl.bindAttribLocation(program, 0, 'in_Vertex');
+  gl.bindAttribLocation(program, 1, 'in_TexCoord');
   gl.linkProgram(program);
   if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.log(gl.getProgramInfoLog(program));
@@ -64,4 +83,11 @@ $(function () {
   gl.clear(gl.COLOR_BUFFER_BIT);
   gl.drawArrays(gl.TRIANGLES, 0, 6);
   gl.flush();
+}
+
+
+$(function () {
+  $.loadImage('atlas.png').then(function (atlas) {
+    run(atlas);
+  });
 });

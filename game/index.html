@@ -28,8 +28,12 @@ canvas#canvas {
   <script type="application/x-glsl" id="fragment-shader">
 precision mediump float;
 
+uniform sampler2D Texture;
+
+varying vec2 ex_TexCoord;
+
 void main(void) {
-  gl_FragColor = vec4(1);
+  gl_FragColor = texture2D(Texture, ex_TexCoord);
 }
   </script>
   <script type="application/x-glsl" id="vertex-shader">
@@ -41,8 +45,12 @@ const mat4 View = mat4(
 );
 
 attribute vec3 in_Vertex;
+attribute vec2 in_TexCoord;
+
+varying vec2 ex_TexCoord;
 
 void main(void) {
+  ex_TexCoord = in_TexCoord;
   gl_Position = vec4(in_Vertex, 1) * View;
 }
   </script>
