@@ -4,15 +4,13 @@ function StampTool(view, stage) {
 }
 
 StampTool.prototype.down = function (x, y) {
-  const {i, j, k} = View.unprojectCell(
-      this._view.x0 + x, this._view.y0 + y)(this._stage.selectedLayer);
+  const {i, j, k} = this._view.unprojectCell(x, y)(this._stage.selectedLayer);
   this._stage.set(i, j, k, 1);
   return true;
 };
 
 StampTool.prototype.drag = function (x, y) {
-  const {i, j, k} = View.unprojectCell(
-      this._view.x0 + x, this._view.y0 + y)(this._stage.selectedLayer);
+  const {i, j, k} = this._view.unprojectCell(x, y)(this._stage.selectedLayer);
   this._stage.set(i, j, k, 1);
   return true;
 };

@@ -14,8 +14,7 @@ FillTool.prototype._flood = function (i, j, k) {
 };
 
 FillTool.prototype.up = function (x, y) {
-  const {i, j, k} = View.unprojectCell(
-      this._view.x0 + x, this._view.y0 + y)(this._stage.selectedLayer);
+  const {i, j, k} = this._view.unprojectCell(x, y)(this._stage.selectedLayer);
   this._flood(i, j, k);
   return true;
 };

@@ -89,8 +89,8 @@ Stage.prototype._setupNode = function () {
 
 
 Stage.prototype._drawLine = function (i0, j0, i1, j1) {
-  const {x: x0, y: y0} = View.project(i0, j0, this.selectedLayer);
-  const {x: x1, y: y1} = View.project(i1, j1, this.selectedLayer);
+  const {x: x0, y: y0} = this._view.project(i0, j0, this.selectedLayer);
+  const {x: x1, y: y1} = this._view.project(i1, j1, this.selectedLayer);
   this._view.context.moveTo(x0, y0);
   this._view.context.lineTo(x1, y1);
 };
@@ -111,7 +111,7 @@ Stage.prototype.has = function (i, j, k) {
 };
 
 Stage.prototype.set = function (i, j, k, type) {
-  const {x, y, z} = View.projectTile(i, j, k);
+  const {x, y, z} = this._view.projectTile(i, j, k);
   if (this._3d.has(k, i, j)) {
     this._2d.erase(z, x, y);
   }
@@ -125,7 +125,7 @@ Stage.prototype.set = function (i, j, k, type) {
 };
 
 Stage.prototype.erase = function (i, j, k) {
-  const {x, y, z} = View.projectTile(i, j, k);
+  const {x, y, z} = this._view.projectTile(i, j, k);
   if (this._3d.has(k, i, j)) {
     this._3d.erase(k, i, j);
     this._2d.erase(z, x, y);
@@ -152,10 +152,10 @@ Stage.prototype.render = function () {
   this._view.context.setTransform(1, 0, 0, 1, -x0, -y0);
   this._view.context.clearRect(x0, y0, width, height);
   const p = [
-    View.unproject(x0, y0)(k),
-    View.unproject(x0 + width, y0)(k),
-    View.unproject(x0, y0 + height)(k),
-    View.unproject(x0 + width, y0 + height)(k),
+    this._view.unproject(0, 0)(k),
+    this._view.unproject(width, 0)(k),
+    this._view.unproject(0, height)(k),
+    this._view.unproject(width, height)(k),
   ];
   const minI = Math.floor(Math.min(p[0].i, p[1].i, p[2].i, p[3].i));
   const maxI = Math.ceil(Math.max(p[0].i, p[1].i, p[2].i, p[3].i));
