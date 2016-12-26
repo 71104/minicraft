@@ -8,7 +8,7 @@ function LayerControls(stage) {
 LayerControls.prototype._setup = function() {
   const that = this;
   const stage = this._stage;
-  $('#layer-transparency').change(function () {
+  $('#layer-transparency').checkboxradio().change(function () {
     stage.transparency = $(this).is(':checked');
     stage.render();
   });

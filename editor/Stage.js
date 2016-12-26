@@ -6,7 +6,7 @@ function Stage(tile, view) {
   this.selectedLayer = 0;
   this.layers = Object.create(null);
   this.layers[0] = true;
-  this.transparency = true;
+  this.transparency = false;
   this._setupNode();
 }
 
