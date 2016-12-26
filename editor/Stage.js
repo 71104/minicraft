@@ -161,6 +161,7 @@ Stage.prototype.render = function () {
   const maxI = Math.ceil(Math.max(p[0].i, p[1].i, p[2].i, p[3].i));
   const minJ = Math.floor(Math.min(p[0].j, p[1].j, p[2].j, p[3].j));
   const maxJ = Math.ceil(Math.max(p[0].j, p[1].j, p[2].j, p[3].j));
+  this._view.context.globalAlpha = 1;
   this._view.context.beginPath();
   this._view.context.lineWidth = 1;
   this._drawLine(0, minJ, 0, maxJ);
