@@ -88,21 +88,10 @@ Stage.prototype._setupNode = function () {
 };
 
 
-Stage.prototype._drawLine = function (i0, j0, i1, j1) {
-  const {x: x0, y: y0} = this._view.project(i0, j0, this.selectedLayer);
-  const {x: x1, y: y1} = this._view.project(i1, j1, this.selectedLayer);
-  this._view.context.moveTo(x0, y0);
-  this._view.context.lineTo(x1, y1);
-};
-
 Stage.prototype._drawTile = function (x, y, tile) {
   if (this.layers[tile.k]) {
-    if (this.transparency && this.selectedLayer !== tile.k) {
-      this._view.context.globalAlpha = 0.5;
-    } else {
-      this._view.context.globalAlpha = 1;
-    }
-    this._view.context.drawImage(this._tile, x, y);
+    this._view.drawImage(
+        this.transparency && this.selectedLayer !== tile.k, this._tile, x, y);
   }
 };
 
@@ -144,42 +133,7 @@ Stage.prototype.eraseLayer = function (k, confirmCallback) {
 };
 
 Stage.prototype.render = function () {
-  const x0 = this._view.x0;
-  const y0 = this._view.y0;
-  const width = this._view.width;
-  const height = this._view.height;
-  const k = this.selectedLayer;
-  this._view.context.setTransform(1, 0, 0, 1, -x0, -y0);
-  this._view.context.clearRect(x0, y0, width, height);
-  const p = [
-    this._view.unproject(0, 0)(k),
-    this._view.unproject(width, 0)(k),
-    this._view.unproject(0, height)(k),
-    this._view.unproject(width, height)(k),
-  ];
-  const minI = Math.floor(Math.min(p[0].i, p[1].i, p[2].i, p[3].i));
-  const maxI = Math.ceil(Math.max(p[0].i, p[1].i, p[2].i, p[3].i));
-  const minJ = Math.floor(Math.min(p[0].j, p[1].j, p[2].j, p[3].j));
-  const maxJ = Math.ceil(Math.max(p[0].j, p[1].j, p[2].j, p[3].j));
-  this._view.context.globalAlpha = 1;
-  this._view.context.beginPath();
-  this._view.context.lineWidth = 1;
-  this._drawLine(0, minJ, 0, maxJ);
-  this._drawLine(minI, 0, maxI, 0);
-  this._view.context.stroke();
-  this._view.context.lineWidth = 0.5;
-  for (var i = minI; i <= maxI; i++) {
-    if (i) {
-      this._drawLine(i, minJ, i, maxJ);
-    }
-  }
-  for (var j = minJ; j <= maxJ; j++) {
-    if (j) {
-      this._drawLine(minI, j, maxI, j);
-    }
-  }
-  this._view.context.stroke();
-  this._view.context.closePath();
+  this._view.drawGrid(this.selectedLayer);
   this._2d.execute('render');
 };
 
