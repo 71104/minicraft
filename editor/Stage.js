@@ -31,21 +31,41 @@ Stage.prototype._setupNode = function () {
     const x = this.y;
     const y = this.z;
     if (x + 48 < stage._view.x0) {
-      this.left && this.left.x < this.x && this.left.render();
+      this.renderLeft();
       this.right && this.right.render();
     } else if (x > stage._view.x0 + stage._view.width) {
       this.left && this.left.render();
-      this.right && this.right.x > this.x && this.right.render();
+      this.renderRight();
     } else if (y + 48 < stage._view.y0) {
-      this.left && this.left.x < this.x && this.left.render();
+      this.renderLeft();
       this.right && this.right.render();
     } else if (y > stage._view.y0 + stage._view.height) {
       this.left && this.left.render();
-      this.right && this.right.x > this.x && this.right.render();
+      this.renderRight();
     } else {
       this.left && this.left.render();
       stage._drawTile(x, y, this.value);
       this.right && this.right.render();
+    }
+  };
+
+  Node.prototype.renderLeft = function () {
+    if (this.left) {
+      if (this.left.x < this.x) {
+        this.left.render();
+      } else {
+        this.left.renderLeft();
+      }
+    }
+  };
+
+  Node.prototype.renderRight = function () {
+    if (this.right) {
+      if (this.right.x > this.x) {
+        this.right.render();
+      } else {
+        this.right.renderRight();
+      }
     }
   };
 
