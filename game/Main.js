@@ -33,7 +33,7 @@ function run(atlas) {
   if (gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
     console.log(gl.getShaderInfoLog(fragmentShader));
   } else {
-    console.error(gl.getShaderInfoLog(fragmentShader));
+    throw new Error(gl.getShaderInfoLog(fragmentShader));
   }
 
   const vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -58,6 +58,19 @@ function run(atlas) {
   gl.enableVertexAttribArray(0);
   gl.vertexAttribPointer(0, 3, gl.SHORT, false, 0, 0);
 
+  const normalBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Int8Array([
+      0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+      1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+      0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+      -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
+      0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0,
+      0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
+  ]), gl.STATIC_DRAW);
+  gl.enableVertexAttribArray(1);
+  gl.vertexAttribPointer(1, 3, gl.BYTE, false, 0, 0);
+
   const texCoordBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, texCoordBuffer);
   gl.bufferData(gl.ARRAY_BUFFER, new Uint8Array([
@@ -68,8 +81,8 @@ function run(atlas) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(1);
-  gl.vertexAttribPointer(1, 2, gl.UNSIGNED_BYTE, false, 0, 0);
+  gl.enableVertexAttribArray(2);
+  gl.vertexAttribPointer(2, 2, gl.UNSIGNED_BYTE, false, 0, 0);
 
   const texIndexBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, texIndexBuffer);
@@ -81,15 +94,16 @@ function run(atlas) {
       2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
       3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0,
   ]), gl.STATIC_DRAW);
-  gl.enableVertexAttribArray(2);
-  gl.vertexAttribPointer(2, 2, gl.UNSIGNED_BYTE, false, 0, 0);
+  gl.enableVertexAttribArray(3);
+  gl.vertexAttribPointer(3, 2, gl.UNSIGNED_BYTE, false, 0, 0);
 
   const program = gl.createProgram();
   gl.attachShader(program, fragmentShader);
   gl.attachShader(program, vertexShader);
   gl.bindAttribLocation(program, 0, 'in_Vertex');
-  gl.bindAttribLocation(program, 1, 'in_TexCoord');
-  gl.bindAttribLocation(program, 2, 'in_TexIndex');
+  gl.bindAttribLocation(program, 1, 'in_Normal');
+  gl.bindAttribLocation(program, 2, 'in_TexCoord');
+  gl.bindAttribLocation(program, 3, 'in_TexIndex');
   gl.linkProgram(program);
   if (gl.getProgramParameter(program, gl.LINK_STATUS)) {
     console.log(gl.getProgramInfoLog(program));
@@ -201,5 +215,7 @@ function run(atlas) {
 $(function () {
   $.loadImage('../common/atlas.png').then(function (atlas) {
     run(atlas);
+  }).catch(function (error) {
+    console.error(error);
   });
 });

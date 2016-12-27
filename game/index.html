@@ -28,13 +28,19 @@ canvas#canvas {
   <script type="application/x-glsl" id="fragment-shader">
 precision mediump float;
 
+const float PI = acos(-1.0);
+const vec3 Light = normalize(vec3(-2, -3, 1));
+
 uniform sampler2D Texture;
 
+varying vec3 ex_Normal;
 varying vec2 ex_TexIndex;
 varying vec2 ex_TexCoord;
 
 void main(void) {
-  gl_FragColor = texture2D(Texture, ex_TexIndex + ex_TexCoord);
+  float Brightness = abs(acos(dot(ex_Normal, Light))) / PI;
+  vec4 Color = texture2D(Texture, ex_TexIndex + ex_TexCoord);
+  gl_FragColor = vec4(vec3(Color) * Brightness, Color.a);
 }
   </script>
   <script type="application/x-glsl" id="vertex-shader">
@@ -60,13 +66,16 @@ uniform struct {
 } in_Camera;
 
 attribute vec3 in_Vertex;
+attribute vec3 in_Normal;
 attribute vec2 in_TexCoord;
 attribute vec2 in_TexIndex;
 
+varying vec3 ex_Normal;
 varying vec2 ex_TexIndex;
 varying vec2 ex_TexCoord;
 
 void main(void) {
+  ex_Normal = in_Normal;
   ex_TexIndex = in_TexIndex / 16.0;
   ex_TexCoord = in_TexCoord / 16.0;
   gl_Position = vec4(in_Vertex, 1) * mat4(
