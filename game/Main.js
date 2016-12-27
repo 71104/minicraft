@@ -122,7 +122,7 @@ function run(atlas) {
 
 
 $(function () {
-  $.loadImage('atlas.png').then(function (atlas) {
+  $.loadImage('../common/atlas.png').then(function (atlas) {
     run(atlas);
   });
 });

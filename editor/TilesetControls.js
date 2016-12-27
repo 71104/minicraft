@@ -1,18 +1,11 @@
 function TilesetControls() {
-  $('#tile-dialog').tabs().dialog({
-    autoOpen: false,
-    modal: true,
-    buttons: {
-      Cancel: function () {
-        $(this).dialog('close');
-      },
-    },
-  });
+  const editorControls = new TileEditorControls();
+
   $('#add-tile').button({
     icon: 'ui-icon-plus',
     showLabel: false,
   }).click(function () {
-    $('#tile-dialog').dialog('open');
+    editorControls.show();
   });
   $('#remove-tile').button({
     icon: 'ui-icon-minus',
@@ -20,4 +13,5 @@ function TilesetControls() {
   }).click(function () {
     // TODO
   });
+
 }

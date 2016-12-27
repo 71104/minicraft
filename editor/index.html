@@ -48,6 +48,38 @@ canvas#canvas {
 #tile-dialog {
   display: none;
 }
+
+#texture-editor {
+  white-space: nowrap;
+}
+
+#texture-selector {
+  display: inline-block;
+  border: 1px solid black;
+  width: 256px;
+  height: 256px;
+  background-image: url(../common/atlas.png);
+}
+
+#texture-scheme {
+  display: inline-block;
+}
+
+#texture-scheme .texture-face {
+  display: block;
+  border: 1px solid black;
+  width: 80px;
+  height: 80px;
+  opacity: 0.5;
+  background-image: url(../common/atlas.png);
+  background-size: 1280px;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+#texture-scheme .texture-face.active {
+  opacity: 1;
+}
   </style>
   <script src="jquery-3.1.1.min.js"></script>
   <script src="jquery-ui.min.js"></script>
@@ -56,6 +88,7 @@ canvas#canvas {
   <script src="View.js"></script>
   <script src="Stage.js"></script>
   <script src="LayerControls.js"></script>
+  <script src="TileEditorControls.js"></script>
   <script src="TilesetControls.js"></script>
   <script src="DragTool.js"></script>
   <script src="StampTool.js"></script>
@@ -104,7 +137,17 @@ canvas#canvas {
       <li><a href="#voxel-tab">Voxel</a></li>
       <li><a href="#custom-block-tab">Custom</a></li>
     </ul>
-    <div id="voxel-tab"></div>
+    <div id="voxel-tab">
+      <div id="texture-editor">
+        <div id="texture-selector"></div>
+        <div id="texture-scheme">
+          <div class="texture-face active"></div>
+          <div class="texture-face"></div>
+          <div class="texture-face"></div>
+        </div>
+      </div>
+      <p><button id="create-voxel">Create</button></p>
+    </div>
     <div id="custom-block-tab">TBD</div>
   </div>
 </body>

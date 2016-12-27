@@ -18,7 +18,10 @@ $(function () {
 
   const view = new View(context, width, height);
 
-  $.loadImage('tile.png').then(function (tile) {
+  $.when(
+    $.loadImage('tile.png'),
+    $.loadImage('../common/atlas.png')
+  ).then(function (tile, atlas) {
     const stage = new Stage(tile, view);
     stage.render();
 
