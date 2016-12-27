@@ -1,20 +1,21 @@
 function run(atlas) {
-  var canvas = $('canvas#canvas');
-  const width = canvas.width();
-  const height = canvas.height();
-  canvas.attr({
-    width: width,
-    height: height,
-  });
-  canvas = canvas.get(0);
-
+  const canvas = $('canvas#canvas').get(0);
   const gl = canvas.getContext('webgl');
+  
+  const resize = function () {
+    const width = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    canvas.width = width;
+    canvas.height = height;
+    if (height > width) {
+      gl.viewport((width - height) / 2, 0, height, height);
+    } else {
+      gl.viewport(0, (height - width) / 2, width, width);
+    }
+  };
 
-  if (height > width) {
-    gl.viewport((width - height) / 2, 0, height, height);
-  } else {
-    gl.viewport(0, (height - width) / 2, width, width);
-  }
+  $(window).resize(resize);
+  resize();
 
   gl.enable(gl.DEPTH_TEST);
   gl.clearDepth(0);
@@ -97,10 +98,11 @@ function run(atlas) {
   }
   gl.useProgram(program);
 
-  const positionLocation = gl.getUniformLocation(program, 'in_Position');
-
   gl.clearColor(0, 0, 0, 1);
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+  const positionLocation = gl.getUniformLocation(program, 'in_Position');
+  const cameraPositionLocation = gl.getUniformLocation(program, 'in_Camera.Position');
+  const cameraAngleLocation = gl.getUniformLocation(program, 'in_Camera.Angle');
 
   Node.prototype.inorder = function () {
     this.left && this.left.inorder();
@@ -115,9 +117,84 @@ function run(atlas) {
   matrix.set(-2, 3, 0);
   matrix.set(-2, 3, -1);
   matrix.set(-2, 2, -2);
-  matrix.execute('inorder');
 
-  gl.flush();
+  const camera = {
+    position: {
+      x: 0,
+      y: 0,
+      z: 0,
+    },
+    angle: {
+      x: 0,
+      y: 0,
+    },
+  };
+
+  const velocity = 0.1;
+
+  const keys = Object.create(null);
+  $(window).keydown(function (event) {
+    keys[event.which] = true;
+  }).keyup(function (event) {
+    delete keys[event.which];
+  });
+
+  const mouse = {
+    x: 0,
+    y: 0,
+  };
+  var dragging = false;
+
+  $(window).mousedown(function (event) {
+    dragging = true;
+    mouse.x = event.clientX;
+    mouse.y = event.clientY;
+  }).mousemove(function (event) {
+    if (dragging) {
+      camera.angle.x += (mouse.y - event.clientY) * 0.005;
+      camera.angle.y += (mouse.x - event.clientX) * 0.005;
+      mouse.x = event.clientX;
+      mouse.y = event.clientY;
+    }
+  }).mouseup(function (event) {
+    dragging = false;
+  });
+
+  window.requestAnimationFrame(function render() {
+    const vx = -Math.sin(camera.angle.y) * velocity;
+    const vz = Math.cos(camera.angle.y) * velocity;
+    if (keys[87]) {  // W
+      camera.position.x += vx;
+      camera.position.z += vz;
+    }
+    if (keys[65]) {  // A
+      camera.position.x -= vz;
+      camera.position.z += vx;
+    }
+    if (keys[83]) {  // S
+      camera.position.x -= vx;
+      camera.position.z -= vz;
+    }
+    if (keys[68]) {  // D
+      camera.position.x += vz;
+      camera.position.z -= vx;
+    }
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.uniform3f(
+      cameraPositionLocation,
+      camera.position.x,
+      camera.position.y,
+      camera.position.z
+      );
+    gl.uniform2f(
+      cameraAngleLocation,
+      camera.angle.x,
+      camera.angle.y
+      );
+    matrix.execute('inorder');
+    gl.flush();
+    window.requestAnimationFrame(render);
+  });
 }
 
 
