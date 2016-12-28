@@ -153,25 +153,13 @@ function run(atlas) {
     delete keys[event.which];
   });
 
-  const mouse = {
-    x: 0,
-    y: 0,
-  };
-  var dragging = false;
-
-  $(window).mousedown(function (event) {
-    dragging = true;
-    mouse.x = event.clientX;
-    mouse.y = event.clientY;
+  $(canvas).click(function () {
+    canvas.requestPointerLock();
+    canvas.requestFullScreen();
   }).mousemove(function (event) {
-    if (dragging) {
-      camera.angle.x += (mouse.y - event.clientY) * 0.005;
-      camera.angle.y += (mouse.x - event.clientX) * 0.005;
-      mouse.x = event.clientX;
-      mouse.y = event.clientY;
-    }
-  }).mouseup(function (event) {
-    dragging = false;
+    camera.angle.x -= event.originalEvent.movementY * 0.005;
+    camera.angle.y -= event.originalEvent.movementX * 0.005;
+    camera.angle.x = Math.min(Math.max(camera.angle.x, -Math.PI / 2), Math.PI / 2);
   });
 
   window.requestAnimationFrame(function render() {
