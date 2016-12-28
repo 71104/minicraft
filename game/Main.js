@@ -126,16 +126,16 @@ function run(atlas) {
   };
 
   const matrix = new Matrix();
-  matrix.set(-2, 2, 1);
-  matrix.set(-2, 3, 1);
-  matrix.set(-2, 3, 0);
-  matrix.set(-2, 3, -1);
-  matrix.set(-2, 2, -2);
+  for (var i = -10; i < 10; i++) {
+    for (var j = -10; j < 10; j++) {
+      matrix.set(-1, i, j);
+    }
+  }
 
   const camera = {
     position: {
       x: 0,
-      y: 0,
+      y: 1.5,
       z: 0,
     },
     angle: {
