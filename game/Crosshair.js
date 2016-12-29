@@ -1,5 +1,5 @@
-function Crosshair(matrix, camera) {
-  this._matrix = matrix;
+function Crosshair(outliner, camera) {
+  this._outliner = outliner;
   this._camera = camera;
   this._heading = {};
   this._box = {
@@ -40,7 +40,7 @@ Crosshair.prototype._pickLeft = function () {
     if (y >= min.y && y <= max.y && z >= min.z && z <= max.z) {
       const y_ = Math.floor(y);
       const z_ = Math.floor(z);
-      if (this._matrix.has(y_, z_, min.x - 1)) {
+      if (this._outliner.has(min.x - 1, y_, z_)) {
         return this._setActive(min.x - 1, y_, z_, min.x, y_, z_);
       } else {
         min.x--;
@@ -63,7 +63,7 @@ Crosshair.prototype._pickRight = function () {
     if (y >= min.y && y <= max.y && z >= min.z && z <= max.z) {
       const y_ = Math.floor(y);
       const z_ = Math.floor(z);
-      if (this._matrix.has(y_, z_, max.x)) {
+      if (this._outliner.has(max.x, y_, z_)) {
         return this._setActive(max.x, y_, z_, max.x - 1, y_, z_);
       } else {
         max.x++;
@@ -86,7 +86,7 @@ Crosshair.prototype._pickDown = function () {
     if (x >= min.x && x <= max.x && z >= min.z && z <= max.z) {
       const x_ = Math.floor(x);
       const z_ = Math.floor(z);
-      if (this._matrix.has(min.y - 1, z_, x_)) {
+      if (this._outliner.has(x_, min.y - 1, z_)) {
         return this._setActive(x_, min.y - 1, z_, x_, min.y, z_);
       } else {
         min.y--;
@@ -109,7 +109,7 @@ Crosshair.prototype._pickUp = function () {
     if (x >= min.x && x <= max.x && z >= min.z && z <= max.z) {
       const x_ = Math.floor(x);
       const z_ = Math.floor(z);
-      if (this._matrix.has(max.y, z_, x_)) {
+      if (this._outliner.has(x_, max.y, z_)) {
         return this._setActive(x_, max.y, z_, x_, max.y - 1, z_);
       } else {
         max.y++;
@@ -132,7 +132,7 @@ Crosshair.prototype._pickBack = function () {
     if (x >= min.x && x <= max.x && y >= min.y && y <= max.y) {
       const x_ = Math.floor(x);
       const y_ = Math.floor(y);
-      if (this._matrix.has(y_, min.z - 1, x_)) {
+      if (this._outliner.has(x_, y_, min.z - 1)) {
         return this._setActive(x_, y_, min.z - 1, x_, y_, min.z);
       } else {
         min.z--;
@@ -155,7 +155,7 @@ Crosshair.prototype._pickFront = function () {
     if (x >= min.x && x <= max.x && y >= min.y && y <= max.y) {
       const x_ = Math.floor(x);
       const y_ = Math.floor(y);
-      if (this._matrix.has(y_, max.z, x_)) {
+      if (this._outliner.has(x_, y_, max.z)) {
         return this._setActive(x_, y_, max.z, x_, y_, max.z - 1);
       } else {
         max.z++;

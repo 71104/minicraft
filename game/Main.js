@@ -120,10 +120,10 @@ function run(atlas) {
   const cameraAngleLocation = gl.getUniformLocation(program, 'in_Camera.Angle');
   const activeFlagLocation = gl.getUniformLocation(program, 'in_Active');
 
-  const matrix = new Matrix();
+  const outliner = new Outliner();
   for (var i = -10; i < 10; i++) {
     for (var j = -10; j < 10; j++) {
-      matrix.set(-1, i, j);
+      outliner.set(j, -1, i);
     }
   }
 
@@ -139,18 +139,7 @@ function run(atlas) {
     },
   };
 
-  const crosshair = new Crosshair(matrix, camera);
-
-  Node.prototype.inorder = function () {
-    const x = this.z;
-    const y = this.x;
-    const z = this.y;
-    this.left && this.left.inorder();
-    gl.uniform3i(positionLocation, x, y, z);
-    gl.uniform1i(activeFlagLocation, crosshair.isActive(x, y, z));
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
-    this.right && this.right.inorder();
-  };
+  const crosshair = new Crosshair(outliner, camera);
 
   const velocity = 0.1;
 
@@ -167,7 +156,7 @@ function run(atlas) {
     if (focus) {
       const target = crosshair.getTarget();
       if (target) {
-        matrix.set(target.y, target.z, target.x);
+        outliner.set(target.x, target.y, target.z);
       }
     } else {
       const requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
@@ -185,6 +174,29 @@ function run(atlas) {
   window.setInterval(function () {
     crosshair.pick();
   }, 200);
+
+  const renderVoxel = function (x, y, z, voxel) {
+    gl.uniform3i(positionLocation, x, y, z);
+    gl.uniform1i(activeFlagLocation, crosshair.isActive(x, y, z));
+    if (voxel & Outliner.FACES.front) {
+      gl.drawArrays(gl.TRIANGLES, 0, 6);
+    }
+    if (voxel & Outliner.FACES.right) {
+      gl.drawArrays(gl.TRIANGLES, 6, 6);
+    }
+    if (voxel & Outliner.FACES.up) {
+      gl.drawArrays(gl.TRIANGLES, 12, 6);
+    }
+    if (voxel & Outliner.FACES.left) {
+      gl.drawArrays(gl.TRIANGLES, 18, 6);
+    }
+    if (voxel & Outliner.FACES.down) {
+      gl.drawArrays(gl.TRIANGLES, 24, 6);
+    }
+    if (voxel & Outliner.FACES.back) {
+      gl.drawArrays(gl.TRIANGLES, 30, 6);
+    }
+  };
 
   window.requestAnimationFrame(function render() {
     const vx = -Math.sin(camera.angle.y) * velocity;
@@ -217,7 +229,7 @@ function run(atlas) {
       camera.angle.x,
       camera.angle.y
       );
-    matrix.execute('inorder');
+    outliner.each(renderVoxel);
     gl.flush();
     window.requestAnimationFrame(render);
   });
