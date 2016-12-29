@@ -25,11 +25,13 @@ Crosshair.prototype.pick = function () {
       const y2 = position.y + heading.y * (x0 - position.x) / heading.x;
       const z2 = position.z + heading.z * (x0 - position.x) / heading.x;
       if (y2 >= y0 && y2 <= y1 && z2 >= z0 && z2 <= z1) {
-        if (this._matrix.has(y, z, x0 - 1)) {
+        const y3 = Math.floor(y2);
+        const z3 = Math.floor(z2);
+        if (this._matrix.has(y3, z3, x0 - 1)) {
           return this._active = {
             x: x0 - 1,
-            y: y,
-            z: z,
+            y: y3,
+            z: z3,
           };
         } else {
           x0--;
@@ -41,11 +43,13 @@ Crosshair.prototype.pick = function () {
       const y2 = position.y + heading.y * (x1 - position.x) / heading.x;
       const z2 = position.z + heading.z * (x1 - position.x) / heading.x;
       if (y2 >= y0 && y2 <= y1 && z2 >= z0 && z2 <= z1) {
-        if (this._matrix.has(y, z, x1)) {
+        const y3 = Math.floor(y2);
+        const z3 = Math.floor(z2);
+        if (this._matrix.has(y3, z3, x1)) {
           return this._active = {
             x: x1,
-            y: y,
-            z: z,
+            y: y3,
+            z: z3,
           };
         } else {
           x1++;
@@ -57,11 +61,13 @@ Crosshair.prototype.pick = function () {
       const x2 = position.x + heading.x * (y0 - position.y) / heading.y;
       const z2 = position.z + heading.z * (y0 - position.y) / heading.y;
       if (x2 >= x0 && x2 <= x1 && z2 >= z0 && z2 <= z1) {
-        if (this._matrix.has(y0 - 1, z, x)) {
+        const x3 = Math.floor(x2);
+        const z3 = Math.floor(z2);
+        if (this._matrix.has(y0 - 1, z3, x3)) {
           return this._active = {
-            x: x,
+            x: x3,
             y: y0 - 1,
-            z: z,
+            z: z3,
           };
         } else {
           y0--;
@@ -73,11 +79,13 @@ Crosshair.prototype.pick = function () {
       const x2 = position.x + heading.x * (y1 - position.y) / heading.y;
       const z2 = position.z + heading.z * (y1 - position.y) / heading.y;
       if (x2 >= x0 && x2 <= x1 && z2 >= z0 && z2 <= z1) {
-        if (this._matrix.has(y1, z, x)) {
+        const x3 = Math.floor(x2);
+        const z3 = Math.floor(z2);
+        if (this._matrix.has(y1, z3, x3)) {
           return this._active = {
-            x: x,
+            x: x3,
             y: y1,
-            z: z,
+            z: z3,
           };
         } else {
           y1++;
@@ -89,10 +97,12 @@ Crosshair.prototype.pick = function () {
       const x2 = position.x + heading.x * (z0 - position.z) / heading.z;
       const y2 = position.y + heading.y * (z0 - position.z) / heading.z;
       if (x2 >= x0 && x2 <= x1 && y2 >= y0 && y2 <= y1) {
-        if (this._matrix.has(y, z0 - 1, x)) {
+        const x3 = Math.floor(y2);
+        const y3 = Math.floor(y2);
+        if (this._matrix.has(y3, z0 - 1, x3)) {
           return this._active = {
-            x: x,
-            y: y,
+            x: x3,
+            y: y3,
             z: z0 - 1,
           };
         } else {
@@ -105,10 +115,12 @@ Crosshair.prototype.pick = function () {
       const x2 = position.x + heading.x * (z1 - position.z) / heading.z;
       const y2 = position.y + heading.y * (z1 - position.z) / heading.z;
       if (x2 >= x0 && x2 <= x1 && y2 >= y0 && y2 <= y1) {
-        if (this._matrix.has(y, z1, x)) {
+        const x3 = Math.floor(y2);
+        const y3 = Math.floor(y2);
+        if (this._matrix.has(y3, z1, x3)) {
           return this._active = {
-            x: x,
-            y: y,
+            x: x3,
+            y: y3,
             z: z1,
           };
         } else {
