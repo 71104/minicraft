@@ -17,6 +17,7 @@ function run(atlas) {
   $(window).resize(resize);
   resize();
 
+  gl.enable(gl.CULL_FACE);
   gl.enable(gl.DEPTH_TEST);
   gl.clearDepth(0);
   gl.depthFunc(gl.GREATER);
