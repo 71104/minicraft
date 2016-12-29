@@ -182,6 +182,10 @@ function run(atlas) {
     }
   });
 
+  window.setInterval(function () {
+    crosshair.pick();
+  }, 200);
+
   window.requestAnimationFrame(function render() {
     const vx = -Math.sin(camera.angle.y) * velocity;
     const vz = Math.cos(camera.angle.y) * velocity;
@@ -201,7 +205,6 @@ function run(atlas) {
       camera.position.x += vz;
       camera.position.z -= vx;
     }
-    crosshair.pick();
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniform3f(
       cameraPositionLocation,
