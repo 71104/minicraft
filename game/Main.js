@@ -117,13 +117,7 @@ function run(atlas) {
   const positionLocation = gl.getUniformLocation(program, 'in_Position');
   const cameraPositionLocation = gl.getUniformLocation(program, 'in_Camera.Position');
   const cameraAngleLocation = gl.getUniformLocation(program, 'in_Camera.Angle');
-
-  Node.prototype.inorder = function () {
-    this.left && this.left.inorder();
-    gl.uniform3i(positionLocation, this.z, this.x, this.y);
-    gl.drawArrays(gl.TRIANGLES, 0, 36);
-    this.right && this.right.inorder();
-  };
+  const activeFlagLocation = gl.getUniformLocation(program, 'in_Active');
 
   const matrix = new Matrix();
   for (var i = -10; i < 10; i++) {
@@ -144,6 +138,19 @@ function run(atlas) {
     },
   };
 
+  const crosshair = new Crosshair(matrix, camera);
+
+  Node.prototype.inorder = function () {
+    const x = this.z;
+    const y = this.x;
+    const z = this.y;
+    this.left && this.left.inorder();
+    gl.uniform3i(positionLocation, x, y, z);
+    gl.uniform1i(activeFlagLocation, crosshair.isActive(x, y, z));
+    gl.drawArrays(gl.TRIANGLES, 0, 36);
+    this.right && this.right.inorder();
+  };
+
   const velocity = 0.1;
 
   const keys = Object.create(null);
@@ -153,13 +160,21 @@ function run(atlas) {
     delete keys[event.which];
   });
 
+  var focus = false;
+
   $(canvas).click(function () {
-    canvas.requestPointerLock();
-    canvas.requestFullScreen();
+    if (focus) {
+      // TODO: build
+    } else {
+      canvas.requestPointerLock();
+      focus = true;
+    }
   }).mousemove(function (event) {
-    camera.angle.x -= event.originalEvent.movementY * 0.005;
-    camera.angle.y -= event.originalEvent.movementX * 0.005;
-    camera.angle.x = Math.min(Math.max(camera.angle.x, -Math.PI / 2), Math.PI / 2);
+    if (focus) {
+      camera.angle.x -= event.originalEvent.movementY * 0.005;
+      camera.angle.y -= event.originalEvent.movementX * 0.005;
+      camera.angle.x = Math.min(Math.max(camera.angle.x, -Math.PI / 2), Math.PI / 2);
+    }
   });
 
   window.requestAnimationFrame(function render() {
@@ -181,6 +196,7 @@ function run(atlas) {
       camera.position.x += vz;
       camera.position.z -= vx;
     }
+    crosshair.pick();
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.uniform3f(
       cameraPositionLocation,
