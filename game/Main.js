@@ -167,7 +167,7 @@ function run(atlas) {
       // TODO: build
     } else {
       const requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
-      requestPointerLock && requestPointerLock();
+      requestPointerLock && requestPointerLock.call(canvas);
       focus = true;
     }
   }).mousemove(function (event) {
