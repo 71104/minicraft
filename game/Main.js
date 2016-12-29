@@ -162,9 +162,12 @@ function run(atlas) {
 
   var focus = false;
 
-  $(canvas).click(function () {
+  $(canvas).mousedown(function () {
     if (focus) {
-      // TODO: build
+      const target = crosshair.getTarget();
+      if (target) {
+        matrix.set(target.y, target.z, target.x);
+      }
     } else {
       const requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
       requestPointerLock && requestPointerLock.call(canvas);

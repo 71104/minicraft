@@ -9,13 +9,17 @@ function Crosshair(matrix, camera) {
   };
   this._far = true;
   this._active = {};
+  this._target = {};
 }
 
-Crosshair.prototype._setActive = function (x, y, z) {
+Crosshair.prototype._setActive = function (ax, ay, az, tx, ty, tz) {
   this._far = false;
-  this._active.x = x;
-  this._active.y = y;
-  this._active.z = z;
+  this._active.x = ax;
+  this._active.y = ay;
+  this._active.z = az;
+  this._target.x = tx;
+  this._target.y = ty;
+  this._target.z = tz;
   return true;
 };
 
@@ -37,7 +41,7 @@ Crosshair.prototype._pickLeft = function () {
       const y_ = Math.floor(y);
       const z_ = Math.floor(z);
       if (this._matrix.has(y_, z_, min.x - 1)) {
-        return this._setActive(min.x - 1, y_, z_);
+        return this._setActive(min.x - 1, y_, z_, min.x, y_, z_);
       } else {
         min.x--;
         return this._pickLeft();
@@ -60,7 +64,7 @@ Crosshair.prototype._pickRight = function () {
       const y_ = Math.floor(y);
       const z_ = Math.floor(z);
       if (this._matrix.has(y_, z_, max.x)) {
-        return this._setActive(max.x, y_, z_);
+        return this._setActive(max.x, y_, z_, max.x - 1, y_, z_);
       } else {
         max.x++;
         return this._pickLeft();
@@ -83,7 +87,7 @@ Crosshair.prototype._pickDown = function () {
       const x_ = Math.floor(x);
       const z_ = Math.floor(z);
       if (this._matrix.has(min.y - 1, z_, x_)) {
-        return this._setActive(x_, min.y - 1, z_);
+        return this._setActive(x_, min.y - 1, z_, x_, min.y, z_);
       } else {
         min.y--;
         return this._pickLeft();
@@ -106,7 +110,7 @@ Crosshair.prototype._pickUp = function () {
       const x_ = Math.floor(x);
       const z_ = Math.floor(z);
       if (this._matrix.has(max.y, z_, x_)) {
-        return this._setActive(x_, max.y, z_);
+        return this._setActive(x_, max.y, z_, x_, max.y - 1, z_);
       } else {
         max.y++;
         return this._pickLeft();
@@ -129,7 +133,7 @@ Crosshair.prototype._pickBack = function () {
       const x_ = Math.floor(x);
       const y_ = Math.floor(y);
       if (this._matrix.has(y_, min.z - 1, x_)) {
-        return this._setActive(x_, y_, min.z - 1);
+        return this._setActive(x_, y_, min.z - 1, x_, y_, min.z);
       } else {
         min.z--;
         return this._pickLeft();
@@ -152,7 +156,7 @@ Crosshair.prototype._pickFront = function () {
       const x_ = Math.floor(x);
       const y_ = Math.floor(y);
       if (this._matrix.has(y_, max.z, x_)) {
-        return this._setActive(x_, y_, max.z);
+        return this._setActive(x_, y_, max.z, x_, y_, max.z - 1);
       } else {
         max.z++;
         return this._pickLeft();
@@ -183,9 +187,29 @@ Crosshair.prototype.pick = function () {
   return this._pickLeft();
 };
 
+Crosshair.prototype.isFar = function () {
+  return this._far;
+};
+
 Crosshair.prototype.isActive = function (x, y, z) {
   return !this._far &&
     this._active.x === x &&
     this._active.y === y &&
     this._active.z === z;
+};
+
+Crosshair.prototype.getActive = function () {
+  if (this._far) {
+    return null;
+  } else {
+    return this._active;
+  }
+};
+
+Crosshair.prototype.getTarget = function () {
+  if (this._far) {
+    return null;
+  } else {
+    return this._target;
+  }
 };
