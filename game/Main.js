@@ -166,7 +166,7 @@ function run(atlas) {
     if (focus) {
       // TODO: build
     } else {
-      const requestPointerLock = canvas.requestPointerLock || mozRequestPointerLock;
+      const requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;
       requestPointerLock && requestPointerLock();
       focus = true;
     }
