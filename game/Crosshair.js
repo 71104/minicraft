@@ -97,7 +97,7 @@ Crosshair.prototype.pick = function () {
       const x2 = position.x + heading.x * (z0 - position.z) / heading.z;
       const y2 = position.y + heading.y * (z0 - position.z) / heading.z;
       if (x2 >= x0 && x2 <= x1 && y2 >= y0 && y2 <= y1) {
-        const x3 = Math.floor(y2);
+        const x3 = Math.floor(x2);
         const y3 = Math.floor(y2);
         if (this._matrix.has(y3, z0 - 1, x3)) {
           return this._active = {
@@ -115,7 +115,7 @@ Crosshair.prototype.pick = function () {
       const x2 = position.x + heading.x * (z1 - position.z) / heading.z;
       const y2 = position.y + heading.y * (z1 - position.z) / heading.z;
       if (x2 >= x0 && x2 <= x1 && y2 >= y0 && y2 <= y1) {
-        const x3 = Math.floor(y2);
+        const x3 = Math.floor(x2);
         const y3 = Math.floor(y2);
         if (this._matrix.has(y3, z1, x3)) {
           return this._active = {
