@@ -14,21 +14,9 @@ function run(atlas) {
     }
   }
 
-  const camera = {
-    position: {
-      x: 0,
-      y: 1.5,
-      z: 0,
-    },
-    angle: {
-      x: 0,
-      y: 0,
-    },
-  };
+  const camera = new Camera();
 
   const crosshair = new Crosshair(outliner, camera);
-
-  const velocity = 0.1;
 
   const keys = Object.create(null);
   $(window).keydown(function (event) {
@@ -67,24 +55,7 @@ function run(atlas) {
   };
 
   window.requestAnimationFrame(function render() {
-    const vx = -Math.sin(camera.angle.y) * velocity;
-    const vz = Math.cos(camera.angle.y) * velocity;
-    if (keys[87]) {  // W
-      camera.position.x += vx;
-      camera.position.z += vz;
-    }
-    if (keys[65]) {  // A
-      camera.position.x -= vz;
-      camera.position.z += vx;
-    }
-    if (keys[83]) {  // S
-      camera.position.x -= vx;
-      camera.position.z -= vz;
-    }
-    if (keys[68]) {  // D
-      camera.position.x += vz;
-      camera.position.z -= vx;
-    }
+    camera.tick(keys);
     pipeline.begin(camera);
     outliner.each(renderVoxel);
     pipeline.flush();
