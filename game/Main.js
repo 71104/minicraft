@@ -8,8 +8,8 @@ function run(atlas) {
   });
 
   const outliner = new Outliner(pipeline);
-  for (var i = -10; i < 10; i++) {
-    for (var j = -10; j < 10; j++) {
+  for (var i = -100; i < 100; i++) {
+    for (var j = -100; j < 100; j++) {
       outliner.set(j, -1, i);
     }
   }
