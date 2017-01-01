@@ -1,35 +1,82 @@
-function Outliner() {
+function Outliner(pipeline) {
   this._matrix = new Matrix();
+  this._faces = new Faces(pipeline);
 }
-
-Outliner.FACES = {
-  front: 1,
-  right: 2,
-  up: 4,
-  back: 8,
-  left: 16,
-  down: 32,
-};
-
-Outliner.OPPOSITE_FACES = {
-  front: 8,
-  right: 16,
-  up: 32,
-  back: 1,
-  left: 2,
-  down: 4,
-};
 
 Outliner.prototype.has = function (x, y, z) {
   return this._matrix.has(y, z, x);
 };
 
-Outliner.prototype._merge = function (x, y, z, face) {
-  if (this._matrix.has(y, z, x)) {
-    const voxel = this._matrix.get(y, z, x) & ~face;
-    if (voxel) {
-      this._matrix.set(y, z, x, voxel);
-    } else {
+Outliner.prototype._mergeFront = function (x, y, z) {
+  if (this._matrix.has(y, --z, x)) {
+    const voxel = this._matrix.get(y, z, x);
+    this._faces.removeBack(voxel);
+    if (voxel.internal()) {
+      this._matrix.erase(y, z, x);
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Outliner.prototype._mergeRight = function (x, y, z) {
+  if (this._matrix.has(y, z, ++x)) {
+    const voxel = this._matrix.get(y, z, x);
+    this._faces.removeLeft(voxel);
+    if (voxel.internal()) {
+      this._matrix.erase(y, z, x);
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Outliner.prototype._mergeTop = function (x, y, z) {
+  if (this._matrix.has(++y, z, x)) {
+    const voxel = this._matrix.get(y, z, x);
+    this._faces.removeBottom(voxel);
+    if (voxel.internal()) {
+      this._matrix.erase(y, z, x);
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Outliner.prototype._mergeLeft = function (x, y, z) {
+  if (this._matrix.has(y, z, --x)) {
+    const voxel = this._matrix.get(y, z, x);
+    this._faces.removeRight(voxel);
+    if (voxel.internal()) {
+      this._matrix.erase(y, z, x);
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Outliner.prototype._mergeBottom = function (x, y, z) {
+  if (this._matrix.has(--y, z, x)) {
+    const voxel = this._matrix.get(y, z, x);
+    this._faces.removeTop(voxel);
+    if (voxel.internal()) {
+      this._matrix.erase(y, z, x);
+    }
+    return true;
+  } else {
+    return false;
+  }
+};
+
+Outliner.prototype._mergeBack = function (x, y, z) {
+  if (this._matrix.has(y, ++z, x)) {
+    const voxel = this._matrix.get(y, z, x);
+    this._faces.removeFront(voxel);
+    if (voxel.internal()) {
       this._matrix.erase(y, z, x);
     }
     return true;
@@ -40,32 +87,72 @@ Outliner.prototype._merge = function (x, y, z, face) {
 
 Outliner.prototype.set = function (x, y, z) {
   if (!this._matrix.has(y, z, x)) {
-    var voxel = 0;
-    if (!this._merge(x, y, z - 1, Outliner.OPPOSITE_FACES.front)) {
-      voxel = voxel | Outliner.FACES.front;
+    const voxel = new Voxel(x, y, z);
+    if (!this._mergeFront(x, y, z)) {
+      this._faces.addFront(x, y, z, voxel);
     }
-    if (!this._merge(x + 1, y, z, Outliner.OPPOSITE_FACES.right)) {
-      voxel = voxel | Outliner.FACES.right;
+    if (!this._mergeRight(x, y, z)) {
+      this._faces.addRight(x, y, z, voxel);
     }
-    if (!this._merge(x, y + 1, z, Outliner.OPPOSITE_FACES.up)) {
-      voxel = voxel | Outliner.FACES.up;
+    if (!this._mergeTop(x, y, z)) {
+      this._faces.addTop(x, y, z, voxel);
     }
-    if (!this._merge(x, y, z + 1, Outliner.OPPOSITE_FACES.back)) {
-      voxel = voxel | Outliner.FACES.back;
+    if (!this._mergeLeft(x, y, z)) {
+      this._faces.addLeft(x, y, z, voxel);
     }
-    if (!this._merge(x - 1, y, z, Outliner.OPPOSITE_FACES.left)) {
-      voxel = voxel | Outliner.FACES.left;
+    if (!this._mergeBottom(x, y, z)) {
+      this._faces.addBottom(x, y, z, voxel);
     }
-    if (!this._merge(x, y - 1, z, Outliner.OPPOSITE_FACES.down)) {
-      voxel = voxel | Outliner.FACES.down;
+    if (!this._mergeBack(x, y, z)) {
+      this._faces.addBack(x, y, z, voxel);
     }
     this._matrix.set(y, z, x, voxel);
   }
 };
 
-Outliner.prototype._split = function (x, y, z, face) {
-  if (this._matrix.has(y, z, x)) {
-    this._matrix.set(y, z, x, this._matrix.get(y, z, x) & face);
+Outliner.prototype._splitFront = function (x, y, z) {
+  if (this._matrix.has(y, --z, x)) {
+    this._faces.addBack(x, y, z, this._matrix.get(y, z, x));
+  } else {
+    this.set(x, y, z);
+  }
+};
+
+Outliner.prototype._splitRight = function (x, y, z) {
+  if (this._matrix.has(y, z, ++x)) {
+    this._faces.addLeft(x, y, z, this._matrix.get(y, z, x));
+  } else {
+    this.set(x, y, z);
+  }
+};
+
+Outliner.prototype._splitTop = function (x, y, z) {
+  if (this._matrix.has(++y, z, x)) {
+    this._faces.addBottom(x, y, z, this._matrix.get(y, z, x));
+  } else {
+    this.set(x, y, z);
+  }
+};
+
+Outliner.prototype._splitLeft = function (x, y, z) {
+  if (this._matrix.has(y, z, --x)) {
+    this._faces.addRight(x, y, z, this._matrix.get(y, z, x));
+  } else {
+    this.set(x, y, z);
+  }
+};
+
+Outliner.prototype._splitBottom = function (x, y, z) {
+  if (this._matrix.has(--y, z, x)) {
+    this._faces.addTop(x, y, z, this._matrix.get(y, z, x));
+  } else {
+    this.set(x, y, z);
+  }
+};
+
+Outliner.prototype._splitBack = function (x, y, z) {
+  if (this._matrix.has(y, ++z, x)) {
+    this._faces.addFront(x, y, z, this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
@@ -74,34 +161,36 @@ Outliner.prototype._split = function (x, y, z, face) {
 Outliner.prototype.erase = function (x, y, z) {
   if (this._matrix.has(y, z, x)) {
     const voxel = this._matrix.get(y, z, x);
-    if (!(voxel & Outliner._FACES.front)) {
-      this._split(x, y, z - 1, Outliner.OPPOSITE_FACES.front);
-    }
-    if (!(voxel & Outliner._FACES.right)) {
-      this._split(x + 1, y, z, Outliner.OPPOSITE_FACES.right);
-    }
-    if (!(voxel & Outliner._FACES.up)) {
-      this._split(x, y + 1, z, Outliner.OPPOSITE_FACES.up);
-    }
-    if (!(voxel & Outliner._FACES.back)) {
-      this._split(x, y, z + 1, Outliner.OPPOSITE_FACES.back);
-    }
-    if (!(voxel & Outliner._FACES.left)) {
-      this._split(x - 1, y, z, Outliner.OPPOSITE_FACES.left);
-    }
-    if (!(voxel & Outliner._FACES.down)) {
-      this._split(x, y - 1, z, Outliner.OPPOSITE_FACES.down);
-    }
     this._matrix.erase(y, z, x);
+    if (voxel.front < 0) {
+      this._splitFront(x, y, z);
+    } else {
+      this._faces.removeFront(voxel);
+    }
+    if (voxel.right < 0) {
+      this._splitRight(x, y, z);
+    } else {
+      this._faces.removeRight(voxel);
+    }
+    if (voxel.top < 0) {
+      this._splitTop(x, y, z);
+    } else {
+      this._faces.removeTop(voxel);
+    }
+    if (voxel.left < 0) {
+      this._splitLeft(x, y, z);
+    } else {
+      this._faces.removeLeft(voxel);
+    }
+    if (voxel.back < 0) {
+      this._splitBack(x, y, z);
+    } else {
+      this._faces.removeBack(voxel);
+    }
+    if (voxel.bottom < 0) {
+      this._splitBottom(x, y, z);
+    } else {
+      this._faces.removeBottom(voxel);
+    }
   }
-};
-
-Node.prototype.inorder = function (callback) {
-  this.left && this.left.inorder(callback);
-  callback(this.z, this.x, this.y, this.value);
-  this.right && this.right.inorder(callback);
-};
-
-Outliner.prototype.each = function (callback) {
-  this._matrix.execute('inorder', callback);
 };

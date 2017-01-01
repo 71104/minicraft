@@ -7,7 +7,7 @@ function run(atlas) {
     pipeline.resize();
   });
 
-  const outliner = new Outliner();
+  const outliner = new Outliner(pipeline);
   for (var i = -10; i < 10; i++) {
     for (var j = -10; j < 10; j++) {
       outliner.set(j, -1, i);
@@ -56,9 +56,7 @@ function run(atlas) {
 
   window.requestAnimationFrame(function render() {
     camera.tick(keys);
-    pipeline.begin(camera);
-    outliner.each(renderVoxel);
-    pipeline.flush();
+    pipeline.render(camera);
     window.requestAnimationFrame(render);
   });
 }

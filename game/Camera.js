@@ -8,7 +8,7 @@ function Camera() {
     x: 0,
     y: 0,
   };
-};
+}
 
 Camera.prototype.tick = function (keys) {
   const vx = -Math.sin(this.angle.y) * Flags.velocity;
