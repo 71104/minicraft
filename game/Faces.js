@@ -64,6 +64,7 @@ Faces.prototype._moveLast = function (i) {
   default:
     throw new Error();
   }
+  this._voxels[i] = last;
   this._voxels.pop();
   this._pipeline.popFace();
 };
