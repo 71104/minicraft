@@ -3,33 +3,33 @@ function Faces(pipeline) {
   this._voxels = [];
 }
 
-Faces.prototype.addFront = function (x, y, z, voxel) {
-  voxel.front = this._pipeline.pushFrontFace(x, y, z);
+Faces.prototype.addFront = function (voxel) {
+  voxel.front = this._pipeline.pushFrontFace(voxel.x, voxel.y, voxel.z);
   this._voxels.push(voxel);
 };
 
-Faces.prototype.addRight = function (x, y, z, voxel) {
-  voxel.right = this._pipeline.pushRightFace(x, y, z);
+Faces.prototype.addRight = function (voxel) {
+  voxel.right = this._pipeline.pushRightFace(voxel.x, voxel.y, voxel.z);
   this._voxels.push(voxel);
 };
 
-Faces.prototype.addTop = function (x, y, z, voxel) {
-  voxel.top = this._pipeline.pushTopFace(x, y, z);
+Faces.prototype.addTop = function (voxel) {
+  voxel.top = this._pipeline.pushTopFace(voxel.x, voxel.y, voxel.z);
   this._voxels.push(voxel);
 };
 
-Faces.prototype.addLeft = function (x, y, z, voxel) {
-  voxel.left = this._pipeline.pushLeftFace(x, y, z);
+Faces.prototype.addLeft = function (voxel) {
+  voxel.left = this._pipeline.pushLeftFace(voxel.x, voxel.y, voxel.z);
   this._voxels.push(voxel);
 };
 
-Faces.prototype.addBottom = function (x, y, z, voxel) {
-  voxel.bottom = this._pipeline.pushBottomFace(x, y, z);
+Faces.prototype.addBottom = function (voxel) {
+  voxel.bottom = this._pipeline.pushBottomFace(voxel.x, voxel.y, voxel.z);
   this._voxels.push(voxel);
 };
 
-Faces.prototype.addBack = function (x, y, z, voxel) {
-  voxel.back = this._pipeline.pushBackFace(x, y, z);
+Faces.prototype.addBack = function (voxel) {
+  voxel.back = this._pipeline.pushBackFace(voxel.x, voxel.y, voxel.z);
   this._voxels.push(voxel);
 };
 

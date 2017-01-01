@@ -89,22 +89,22 @@ Outliner.prototype.set = function (x, y, z) {
   if (!this._matrix.has(y, z, x)) {
     const voxel = new Voxel(x, y, z);
     if (!this._mergeFront(x, y, z)) {
-      this._faces.addFront(x, y, z, voxel);
+      this._faces.addFront(voxel);
     }
     if (!this._mergeRight(x, y, z)) {
-      this._faces.addRight(x, y, z, voxel);
+      this._faces.addRight(voxel);
     }
     if (!this._mergeTop(x, y, z)) {
-      this._faces.addTop(x, y, z, voxel);
+      this._faces.addTop(voxel);
     }
     if (!this._mergeLeft(x, y, z)) {
-      this._faces.addLeft(x, y, z, voxel);
+      this._faces.addLeft(voxel);
     }
     if (!this._mergeBottom(x, y, z)) {
-      this._faces.addBottom(x, y, z, voxel);
+      this._faces.addBottom(voxel);
     }
     if (!this._mergeBack(x, y, z)) {
-      this._faces.addBack(x, y, z, voxel);
+      this._faces.addBack(voxel);
     }
     this._matrix.set(y, z, x, voxel);
   }
@@ -112,7 +112,7 @@ Outliner.prototype.set = function (x, y, z) {
 
 Outliner.prototype._splitFront = function (x, y, z) {
   if (this._matrix.has(y, --z, x)) {
-    this._faces.addBack(x, y, z, this._matrix.get(y, z, x));
+    this._faces.addBack(this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
@@ -120,7 +120,7 @@ Outliner.prototype._splitFront = function (x, y, z) {
 
 Outliner.prototype._splitRight = function (x, y, z) {
   if (this._matrix.has(y, z, ++x)) {
-    this._faces.addLeft(x, y, z, this._matrix.get(y, z, x));
+    this._faces.addLeft(this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
@@ -128,7 +128,7 @@ Outliner.prototype._splitRight = function (x, y, z) {
 
 Outliner.prototype._splitTop = function (x, y, z) {
   if (this._matrix.has(++y, z, x)) {
-    this._faces.addBottom(x, y, z, this._matrix.get(y, z, x));
+    this._faces.addBottom(this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
@@ -136,7 +136,7 @@ Outliner.prototype._splitTop = function (x, y, z) {
 
 Outliner.prototype._splitLeft = function (x, y, z) {
   if (this._matrix.has(y, z, --x)) {
-    this._faces.addRight(x, y, z, this._matrix.get(y, z, x));
+    this._faces.addRight(this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
@@ -144,7 +144,7 @@ Outliner.prototype._splitLeft = function (x, y, z) {
 
 Outliner.prototype._splitBottom = function (x, y, z) {
   if (this._matrix.has(--y, z, x)) {
-    this._faces.addTop(x, y, z, this._matrix.get(y, z, x));
+    this._faces.addTop(this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
@@ -152,7 +152,7 @@ Outliner.prototype._splitBottom = function (x, y, z) {
 
 Outliner.prototype._splitBack = function (x, y, z) {
   if (this._matrix.has(y, ++z, x)) {
-    this._faces.addFront(x, y, z, this._matrix.get(y, z, x));
+    this._faces.addFront(this._matrix.get(y, z, x));
   } else {
     this.set(x, y, z);
   }
