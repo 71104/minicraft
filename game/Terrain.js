@@ -1,7 +1,9 @@
 function Terrain() {}
 
-Terrain.MAX = 64;
+Terrain.MAX = 16;
 Terrain.SPAN = Terrain.MAX + 1;
+
+Terrain.MAX4 = Terrain.MAX * 4;
 
 Terrain._outline = function (outliner, heightMap) {
   var min = heightMap[0][0];
@@ -10,18 +12,33 @@ Terrain._outline = function (outliner, heightMap) {
       min = Math.min(min, heightMap[i][j]);
     }
   }
-  const d = Terrain.MAX / 2;
+  const sample = function (i, j) {
+    i /= 4;
+    j /= 4;
+    const i0 = Math.floor(i);
+    const i1 = Math.floor(i) + 1;
+    const j0 = Math.floor(j);
+    const j1 = Math.floor(j) + 1;
+    return Math.round(
+        heightMap[i0][j0] * (i1 - i) * (j1 - j) +
+        heightMap[i0][j1] * (i1 - i) * (j - j0) +
+        heightMap[i1][j0] * (i - i0) * (j1 - j) +
+        heightMap[i1][j1] * (i - i0) * (j - j0)
+    );
+  };
+  const d = Terrain.MAX4 / 2;
   return $.Deferred(function (deferred) {
     (function outline(i, j) {
       window.setTimeout(function () {
-        for (var k = min; k < heightMap[i][j]; k++) {
+        const height = sample(i, j);
+        for (var k = min; k < height; k++) {
           outliner.set(j - d, k, i - d, Voxel.TYPES.DIRT);
         }
-        outliner.set(j - d, heightMap[i][j], i - d, Voxel.TYPES.GRASS);
+        outliner.set(j - d, height, i - d, Voxel.TYPES.GRASS);
         deferred.notify(i * Terrain.MAX + j % Terrain.MAX);
-        if (j < Terrain.MAX) {
+        if (j < Terrain.MAX4) {
           outline(i, j + 1);
-        } else if (i < Terrain.MAX) {
+        } else if (i < Terrain.MAX4) {
           outline(i + 1, 0);
         } else {
           deferred.resolve();
@@ -39,7 +56,7 @@ Terrain._ds = function (heightMap, i0, j0, i1, j1) {
   if (i1 > i0 + 1 && j1 > j0 + 1) {
     const i = (i0 + i1) >> 1;
     const j = (j0 + j1) >> 1;
-    const d = (i1 - i0) >> 2;
+    const d = i1 - i0;
     heightMap[i][j] = Math.round((
         heightMap[i0][j0] +
         heightMap[i0][j1] +
