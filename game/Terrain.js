@@ -1,35 +1,12 @@
 function Terrain() {}
 
-Terrain.MIN_I = -33;
-Terrain.MAX_I = 33;
-Terrain.I_SPAN = Terrain.MAX_I - Terrain.MIN_I;
-
-Terrain.MIN_J = -33;
-Terrain.MAX_J = 33;
-Terrain.J_SPAN = Terrain.MAX_J - Terrain.MIN_J;
-
-Terrain._OFFSETS = [
-  -5,
-  -4,
-  -3, -3,
-  -2, -2, -2, -2,
-  -1, -1, -1, -1, -1,
-  0, 0, 0, 0, 0, 0, 0, 0,
-  1, 1, 1, 1, 1,
-  2, 2, 2, 2,
-  3, 3,
-  4,
-  5,
-];
-
-Terrain._randomOffset = function () {
-  return Terrain._OFFSETS[Math.floor(Math.random() * Terrain._OFFSETS.length)];
-};
+Terrain.MAX = 64;
+Terrain.SPAN = Terrain.MAX + 1;
 
 Terrain._outline = function (outliner, heightMap) {
-  var min = heightMap[Terrain.MIN_I][Terrain.MIN_J];
-  for (var i = Terrain.MIN_I; i < Terrain.MAX_I; i++) {
-    for (var j = Terrain.MIN_J; j < Terrain.MAX_J; j++) {
+  var min = heightMap[0][0];
+  for (var i = 0; i < Terrain.SPAN; i++) {
+    for (var j = 0; j < Terrain.SPAN; j++) {
       min = Math.min(min, heightMap[i][j]);
     }
   }
@@ -40,38 +17,77 @@ Terrain._outline = function (outliner, heightMap) {
           outliner.set(j, k, i, Voxel.TYPES.DIRT);
         }
         outliner.set(j, heightMap[i][j], i, Voxel.TYPES.GRASS);
-        deferred.notify(i * Terrain.I_SPAN + j % Terrain.I_SPAN);
-        if (j < Terrain.MAX_J - 1) {
+        deferred.notify(i * Terrain.MAX + j % Terrain.MAX);
+        if (j < Terrain.MAX) {
           outline(i, j + 1);
-        } else if (i < Terrain.MAX_I - 1) {
-          outline(i + 1, Terrain.MIN_J);
+        } else if (i < Terrain.MAX) {
+          outline(i + 1, 0);
         } else {
           deferred.resolve();
         }
       }, 0);
-    }(Terrain.MIN_I, Terrain.MIN_J));
+    }(0, 0));
   });
+};
+
+Terrain._mod = function (i) {
+  return ((i % Terrain.SPAN) + Terrain.SPAN) % Terrain.SPAN;
+};
+
+Terrain._ds = function (heightMap, i0, j0, i1, j1) {
+  if (i1 > i0 + 1 && j1 > j0 + 1) {
+    const i = (i0 + i1) >> 1;
+    const j = (j0 + j1) >> 1;
+    const d = (i1 - i0) >> 2;
+    heightMap[i][j] = Math.round((
+        heightMap[i0][j0] +
+        heightMap[i0][j1] +
+        heightMap[i1][j0] +
+        heightMap[i1][j1]
+    ) / 4 + (Math.random() * 2 - 1) * d);
+    heightMap[i0][j] = Math.round((
+        heightMap[i0][j0] +
+        heightMap[Terrain._mod(i0 * 2 - i)][j] +
+        heightMap[i0][j1] +
+        heightMap[i][j]
+    ) / 4 + (Math.random() * 2 - 1) * d);
+    heightMap[i][j0] = Math.round((
+        heightMap[i0][j0] +
+        heightMap[i][Terrain._mod(j0 * 2 - j)] +
+        heightMap[i][j] +
+        heightMap[i1][j0]
+    ) / 4 + (Math.random() * 2 - 1) * d);
+    heightMap[i][j1] = Math.round((
+        heightMap[i0][j1] +
+        heightMap[i][j] +
+        heightMap[i][Terrain._mod(j1 * 2 - j)] +
+        heightMap[i1][j1]
+    ) / 4 + (Math.random() * 2 - 1) * d);
+    heightMap[i1][j] = Math.round((
+        heightMap[i][j] +
+        heightMap[i1][j0] +
+        heightMap[i1][j1] +
+        heightMap[Terrain._mod(i1 * 2 - i)][j]
+    ) / 4 + (Math.random() * 2 - 1) * d);
+    Terrain._ds(heightMap, i0, j0, i, j);
+    Terrain._ds(heightMap, i0, j, i, j1);
+    Terrain._ds(heightMap, i, j0, i1, j);
+    Terrain._ds(heightMap, i, j, i1, j1);
+  }
 };
 
 Terrain.generate = function (outliner) {
   const heightMap = {};
-  for (var i = Terrain.MIN_I; i < Terrain.MAX_I; i++) {
+  for (var i = 0; i < Terrain.SPAN; i++) {
     heightMap[i] = {};
-  }
-  heightMap[Terrain.MIN_I][Terrain.MIN_J] = -1;
-  for (var i = Terrain.MIN_I + 1; i < Terrain.MAX_I; i++) {
-    heightMap[i][Terrain.MIN_J] = heightMap[i - 1][Terrain.MIN_J] +
-      Terrain._randomOffset();
-  }
-  for (var j = Terrain.MIN_J + 1; j < Terrain.MAX_J; j++) {
-    heightMap[Terrain.MIN_I][j] = heightMap[Terrain.MIN_I][j - 1] +
-      Terrain._randomOffset();
-  }
-  for (var i = Terrain.MIN_I + 1; i < Terrain.MAX_I; i++) {
-    for (var j = Terrain.MIN_J + 1; j < Terrain.MAX_J; j++) {
-      heightMap[i][j] = Math.round((heightMap[i - 1][j] +
-            heightMap[i][j - 1]) / 2);
+    for (var j = 0; j < Terrain.SPAN; j++) {
+      heightMap[i][j] = -1;
     }
   }
+  heightMap[0][0] = -1;
+  heightMap[Terrain.MAX][0] = -1;
+  heightMap[0][Terrain.MAX] = -1;
+  heightMap[Terrain.MAX][Terrain.MAX] = -1;
+  Terrain._ds(heightMap, 0, 0, Terrain.MAX, Terrain.MAX);
   return Terrain._outline(outliner, heightMap);
 };
