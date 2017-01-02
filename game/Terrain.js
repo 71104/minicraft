@@ -32,7 +32,7 @@ Terrain._outline = function (outliner, heightMap) {
 };
 
 Terrain._mod = function (i) {
-  return ((i % Terrain.SPAN) + Terrain.SPAN) % Terrain.SPAN;
+  return Math.abs(i % Terrain.SPAN);
 };
 
 Terrain._ds = function (heightMap, i0, j0, i1, j1) {
