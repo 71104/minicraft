@@ -8,11 +8,7 @@ function run(atlas) {
   });
 
   const outliner = new Outliner(pipeline);
-  for (var i = -100; i < 100; i++) {
-    for (var j = -100; j < 100; j++) {
-      outliner.set(j, -1, i);
-    }
-  }
+  Terrain.generate(outliner);
 
   const camera = new Camera();
 
