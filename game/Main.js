@@ -27,7 +27,7 @@ function run(atlas) {
     if (focus) {
       const target = crosshair.getTarget();
       if (target) {
-        outliner.set(target.x, target.y, target.z);
+        outliner.set(target.x, target.y, target.z, Voxel.TYPES.STONE);
       }
     } else {
       const requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock;

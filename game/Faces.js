@@ -4,33 +4,57 @@ function Faces(pipeline) {
 }
 
 Faces.prototype.addFront = function (voxel) {
-  voxel.front = this._pipeline.pushFrontFace(voxel.x, voxel.y, voxel.z);
+  voxel.front = this._pipeline.pushFrontFace(voxel.x, voxel.y, voxel.z, voxel.type);
   this._voxels.push(voxel);
 };
 
 Faces.prototype.addRight = function (voxel) {
-  voxel.right = this._pipeline.pushRightFace(voxel.x, voxel.y, voxel.z);
+  voxel.right = this._pipeline.pushRightFace(voxel.x, voxel.y, voxel.z, voxel.type);
   this._voxels.push(voxel);
 };
 
 Faces.prototype.addTop = function (voxel) {
-  voxel.top = this._pipeline.pushTopFace(voxel.x, voxel.y, voxel.z);
+  voxel.top = this._pipeline.pushTopFace(voxel.x, voxel.y, voxel.z, voxel.type);
   this._voxels.push(voxel);
 };
 
 Faces.prototype.addLeft = function (voxel) {
-  voxel.left = this._pipeline.pushLeftFace(voxel.x, voxel.y, voxel.z);
+  voxel.left = this._pipeline.pushLeftFace(voxel.x, voxel.y, voxel.z, voxel.type);
   this._voxels.push(voxel);
 };
 
 Faces.prototype.addBottom = function (voxel) {
-  voxel.bottom = this._pipeline.pushBottomFace(voxel.x, voxel.y, voxel.z);
+  voxel.bottom = this._pipeline.pushBottomFace(voxel.x, voxel.y, voxel.z, voxel.type);
   this._voxels.push(voxel);
 };
 
 Faces.prototype.addBack = function (voxel) {
-  voxel.back = this._pipeline.pushBackFace(voxel.x, voxel.y, voxel.z);
+  voxel.back = this._pipeline.pushBackFace(voxel.x, voxel.y, voxel.z, voxel.type);
   this._voxels.push(voxel);
+};
+
+Faces.prototype.updateFront = function (voxel) {
+  this._pipeline.setFace(voxel.front, voxel.x, voxel.y, voxel.z, voxel.type);
+};
+
+Faces.prototype.updateRight = function (voxel) {
+  this._pipeline.setFace(voxel.right, voxel.x, voxel.y, voxel.z, voxel.type);
+};
+
+Faces.prototype.updateTop = function (voxel) {
+  this._pipeline.setFace(voxel.top, voxel.x, voxel.y, voxel.z, voxel.type);
+};
+
+Faces.prototype.updateLeft = function (voxel) {
+  this._pipeline.setFace(voxel.left, voxel.x, voxel.y, voxel.z, voxel.type);
+};
+
+Faces.prototype.updateBottom = function (voxel) {
+  this._pipeline.setFace(voxel.bottom, voxel.x, voxel.y, voxel.z, voxel.type);
+};
+
+Faces.prototype.updateBack = function (voxel) {
+  this._pipeline.setFace(voxel.back, voxel.x, voxel.y, voxel.z, voxel.type);
 };
 
 Faces.prototype._moveLast = function (i) {
@@ -39,27 +63,27 @@ Faces.prototype._moveLast = function (i) {
   switch (j) {
   case last.front:
     last.front = i;
-    this._pipeline.setFrontFace(i, last.x, last.y, last.z);
+    this._pipeline.setFrontFace(i, last.x, last.y, last.z, last.type);
     break;
   case last.right:
     last.right = i;
-    this._pipeline.setRightFace(i, last.x, last.y, last.z);
+    this._pipeline.setRightFace(i, last.x, last.y, last.z, last.type);
     break;
   case last.top:
     last.top = i;
-    this._pipeline.setTopFace(i, last.x, last.y, last.z);
+    this._pipeline.setTopFace(i, last.x, last.y, last.z, last.type);
     break;
   case last.left:
     last.left = i;
-    this._pipeline.setLeftFace(i, last.x, last.y, last.z);
+    this._pipeline.setLeftFace(i, last.x, last.y, last.z, last.type);
     break;
   case last.bottom:
     last.bottom = i;
-    this._pipeline.setBottomFace(i, last.x, last.y, last.z);
+    this._pipeline.setBottomFace(i, last.x, last.y, last.z, last.type);
     break;
   case last.back:
     last.back = i;
-    this._pipeline.setBackFace(i, last.x, last.y, last.z);
+    this._pipeline.setBackFace(i, last.x, last.y, last.z, last.type);
     break;
   default:
     throw new Error();

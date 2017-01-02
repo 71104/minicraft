@@ -51,9 +51,10 @@ Terrain.generate = function (outliner) {
   }
   for (var i = Terrain.MIN_I; i < Terrain.MAX_I; i++) {
     for (var j = Terrain.MIN_J; j < Terrain.MAX_J; j++) {
-      for (var k = min; k <= heightMap[i][j]; k++) {
-        outliner.set(j, k, i);
+      for (var k = min; k < heightMap[i][j]; k++) {
+        outliner.set(j, k, i, Voxel.TYPES.DIRT);
       }
+      outliner.set(j, heightMap[i][j], i, Voxel.TYPES.GRASS);
     }
   }
 };

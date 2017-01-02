@@ -130,7 +130,7 @@ Pipeline.prototype.popFace = function () {
   }
 };
 
-Pipeline.prototype.setFrontFace = function (i, x, y, z) {
+Pipeline.prototype.setFrontFace = function (i, x, y, z, type) {
   const j = Math.floor(i / Pipeline.FACES_PER_BUFFER);
   const k = i % Pipeline.FACES_PER_BUFFER;
   if (j < 0 || j >= this._bufferCount) {
@@ -151,12 +151,10 @@ Pipeline.prototype.setFrontFace = function (i, x, y, z) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]));
   gl.bindBuffer(gl.ARRAY_BUFFER, this._texIndexBuffers[j]);
-  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array([
-      3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0,
-  ]));
+  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array(type[1]));
 };
 
-Pipeline.prototype.setRightFace = function (i, x, y, z) {
+Pipeline.prototype.setRightFace = function (i, x, y, z, type) {
   const j = Math.floor(i / Pipeline.FACES_PER_BUFFER);
   const k = i % Pipeline.FACES_PER_BUFFER;
   if (j < 0 || j >= this._bufferCount) {
@@ -177,12 +175,10 @@ Pipeline.prototype.setRightFace = function (i, x, y, z) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]));
   gl.bindBuffer(gl.ARRAY_BUFFER, this._texIndexBuffers[j]);
-  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array([
-      3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0,
-  ]));
+  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array(type[1]));
 };
 
-Pipeline.prototype.setTopFace = function (i, x, y, z) {
+Pipeline.prototype.setTopFace = function (i, x, y, z, type) {
   const j = Math.floor(i / Pipeline.FACES_PER_BUFFER);
   const k = i % Pipeline.FACES_PER_BUFFER;
   if (j < 0 || j >= this._bufferCount) {
@@ -203,12 +199,10 @@ Pipeline.prototype.setTopFace = function (i, x, y, z) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]));
   gl.bindBuffer(gl.ARRAY_BUFFER, this._texIndexBuffers[j]);
-  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array([
-      2, 9, 2, 9, 2, 9, 2, 9, 2, 9, 2, 9,
-  ]));
+  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array(type[0]));
 };
 
-Pipeline.prototype.setLeftFace = function (i, x, y, z) {
+Pipeline.prototype.setLeftFace = function (i, x, y, z, type) {
   const j = Math.floor(i / Pipeline.FACES_PER_BUFFER);
   const k = i % Pipeline.FACES_PER_BUFFER;
   if (j < 0 || j >= this._bufferCount) {
@@ -229,12 +223,10 @@ Pipeline.prototype.setLeftFace = function (i, x, y, z) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]));
   gl.bindBuffer(gl.ARRAY_BUFFER, this._texIndexBuffers[j]);
-  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array([
-      3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0,
-  ]));
+  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array(type[1]));
 };
 
-Pipeline.prototype.setBottomFace = function (i, x, y, z) {
+Pipeline.prototype.setBottomFace = function (i, x, y, z, type) {
   const j = Math.floor(i / Pipeline.FACES_PER_BUFFER);
   const k = i % Pipeline.FACES_PER_BUFFER;
   if (j < 0 || j >= this._bufferCount) {
@@ -255,12 +247,10 @@ Pipeline.prototype.setBottomFace = function (i, x, y, z) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]));
   gl.bindBuffer(gl.ARRAY_BUFFER, this._texIndexBuffers[j]);
-  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array([
-      2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0,
-  ]));
+  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array(type[2]));
 };
 
-Pipeline.prototype.setBackFace = function (i, x, y, z) {
+Pipeline.prototype.setBackFace = function (i, x, y, z, type) {
   const j = Math.floor(i / Pipeline.FACES_PER_BUFFER);
   const k = i % Pipeline.FACES_PER_BUFFER;
   if (j < 0 || j >= this._bufferCount) {
@@ -281,44 +271,42 @@ Pipeline.prototype.setBackFace = function (i, x, y, z) {
       0, 0, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0,
   ]));
   gl.bindBuffer(gl.ARRAY_BUFFER, this._texIndexBuffers[j]);
-  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array([
-      3, 0, 3, 0, 3, 0, 3, 0, 3, 0, 3, 0,
-  ]));
+  gl.bufferSubData(gl.ARRAY_BUFFER, k * Pipeline._FACE_TEX_INDEX_SIZE, new Uint8Array(type[1]));
 };
 
-Pipeline.prototype.pushFrontFace = function (x, y, z) {
+Pipeline.prototype.pushFrontFace = function (x, y, z, type) {
   const i = this.pushFace();
-  this.setFrontFace(i, x, y, z);
+  this.setFrontFace(i, x, y, z, type);
   return i;
 };
 
-Pipeline.prototype.pushRightFace = function (x, y, z) {
+Pipeline.prototype.pushRightFace = function (x, y, z, type) {
   const i = this.pushFace();
-  this.setRightFace(i, x, y, z);
+  this.setRightFace(i, x, y, z, type);
   return i;
 };
 
-Pipeline.prototype.pushTopFace = function (x, y, z) {
+Pipeline.prototype.pushTopFace = function (x, y, z, type) {
   const i = this.pushFace();
-  this.setTopFace(i, x, y, z);
+  this.setTopFace(i, x, y, z, type);
   return i;
 };
 
-Pipeline.prototype.pushLeftFace = function (x, y, z) {
+Pipeline.prototype.pushLeftFace = function (x, y, z, type) {
   const i = this.pushFace();
-  this.setLeftFace(i, x, y, z);
+  this.setLeftFace(i, x, y, z, type);
   return i;
 };
 
-Pipeline.prototype.pushBottomFace = function (x, y, z) {
+Pipeline.prototype.pushBottomFace = function (x, y, z, type) {
   const i = this.pushFace();
-  this.setBottomFace(i, x, y, z);
+  this.setBottomFace(i, x, y, z, type);
   return i;
 };
 
-Pipeline.prototype.pushBackFace = function (x, y, z) {
+Pipeline.prototype.pushBackFace = function (x, y, z, type) {
   const i = this.pushFace();
-  this.setBackFace(i, x, y, z);
+  this.setBackFace(i, x, y, z, type);
   return i;
 };
 
