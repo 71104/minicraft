@@ -10,13 +10,14 @@ Terrain._outline = function (outliner, heightMap) {
       min = Math.min(min, heightMap[i][j]);
     }
   }
+  const d = Terrain.MAX / 2;
   return $.Deferred(function (deferred) {
     (function outline(i, j) {
       window.setTimeout(function () {
         for (var k = min; k < heightMap[i][j]; k++) {
-          outliner.set(j, k, i, Voxel.TYPES.DIRT);
+          outliner.set(j - d, k, i - d, Voxel.TYPES.DIRT);
         }
-        outliner.set(j, heightMap[i][j], i, Voxel.TYPES.GRASS);
+        outliner.set(j - d, heightMap[i][j], i - d, Voxel.TYPES.GRASS);
         deferred.notify(i * Terrain.MAX + j % Terrain.MAX);
         if (j < Terrain.MAX) {
           outline(i, j + 1);
