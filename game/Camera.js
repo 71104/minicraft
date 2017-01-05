@@ -1,7 +1,13 @@
-function Camera() {
+function Camera(physics) {
+  this._physics = physics;
   this.position = {
-    x: 0,
+    x: 0.5,
     y: 1.5,
+    z: 0.5,
+  };
+  this.velocity = {
+    x: 0,
+    y: 0,
     z: 0,
   };
   this.angle = {
@@ -10,23 +16,24 @@ function Camera() {
   };
 }
 
-Camera.prototype.tick = function (keys) {
-  const vx = -Math.sin(this.angle.y) * Flags.velocity;
-  const vz = Math.cos(this.angle.y) * Flags.velocity;
+Camera.prototype.tick = function (dt, keys) {
+  this.velocity.x = 0;
+  this.velocity.z = 0;
   if (keys[87]) {  // W
-    this.position.x += vx;
-    this.position.z += vz;
+    this.velocity.x -= Math.sin(this.angle.y) * Flags.velocity;
+    this.velocity.z += Math.cos(this.angle.y) * Flags.velocity;
   }
   if (keys[65]) {  // A
-    this.position.x -= vz;
-    this.position.z += vx;
+    this.velocity.x -= Math.cos(this.angle.y) * Flags.velocity;
+    this.velocity.z -= Math.sin(this.angle.y) * Flags.velocity;
   }
   if (keys[83]) {  // S
-    this.position.x -= vx;
-    this.position.z -= vz;
+    this.velocity.x += Math.sin(this.angle.y) * Flags.velocity;
+    this.velocity.z -= Math.cos(this.angle.y) * Flags.velocity;
   }
   if (keys[68]) {  // D
-    this.position.x += vz;
-    this.position.z -= vx;
+    this.velocity.x += Math.cos(this.angle.y) * Flags.velocity;
+    this.velocity.z += Math.sin(this.angle.y) * Flags.velocity;
   }
+  this._physics.tick(dt, this.position, this.velocity);
 };

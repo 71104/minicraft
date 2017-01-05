@@ -8,9 +8,15 @@ function run(atlas) {
   });
 
   const outliner = new Outliner(pipeline);
-  Terrain.generate(outliner);
+  //Terrain.generate(outliner);
 
-  const camera = new Camera();
+  for (var i = -10; i < 10; i++) {
+    for (var j = -10; j < 10; j++) {
+      outliner.set(j, -1, i, Voxel.TYPES.GRASS);
+    }
+  }
+
+  const camera = new Camera(new Physics(outliner));
 
   const crosshair = new Crosshair(outliner, camera);
 
@@ -45,14 +51,17 @@ function run(atlas) {
   window.setInterval(function () {
     crosshair.pick();
   }, 200);
-
-  const renderVoxel = function (x, y, z, voxel) {
-    pipeline.renderVoxel(x, y, z, voxel, crosshair.isActive(x, y, z));
+  
+  var t0 = null;
+  const render = function render(t1) {
+    camera.tick(t1 - t0, keys);
+    pipeline.render(camera);
+    t0 = t1;
+    window.requestAnimationFrame(render);
   };
 
-  window.requestAnimationFrame(function render() {
-    camera.tick(keys);
-    pipeline.render(camera);
+  window.requestAnimationFrame(function (timestamp) {
+    t0 = timestamp;
     window.requestAnimationFrame(render);
   });
 }

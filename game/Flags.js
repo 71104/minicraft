@@ -4,5 +4,5 @@ function Flags() {}
 // exceeded)
 Flags.facesPerBuffer = 0x20000;
 
-// player's walking velocity in units per tick - dynamic flag
-Flags.velocity = 0.1;
+// player's walking velocity in units per second - dynamic flag
+Flags.velocity = 4;
